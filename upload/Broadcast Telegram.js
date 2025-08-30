@@ -1,9 +1,9 @@
 let Izumi = async (m, { conn,  text }) => {
-    if (!text) return m.reply('Masukan Teks Buat Boardcast')
+    if (!text) return m.reply('⚠️ Masukan Teks Buat Boardcast')
     const userId = Object.keys(db.data.users).filter(id => id)
     const groupId = Object.keys(db.data.chats).filter(id => id.startsWith('-'));
 
-    let caption = 'Boardcast Dari: %name\n⌨️Text: %text';
+    let caption = '📢Boardcast Dari: %name\n⌨️Text: %text';
     let boardc = caption
         .replace(/%name/g, m.name)
         .replace(/%text/g, text)
@@ -13,9 +13,9 @@ let Izumi = async (m, { conn,  text }) => {
             await conn.telegram.sendMessage(userId[i], boardc);
         } catch (e) {
             if (e.response && e.response.description === "Forbidden: bots can't send messages to bots") {
-                console.log(" Skip bot ID " + userId[i]);
+                console.log("❌ Skip bot ID " + userId[i]);
             } else {
-                console.log(" Gagal kirim ke " + userId[i] + ": " + e.message);
+                console.log("❌ Gagal kirim ke " + userId[i] + ": " + e.message);
             };
         };
     };
@@ -24,7 +24,7 @@ let Izumi = async (m, { conn,  text }) => {
         try {
             await conn.telegram.sendMessage(groupId[i], boardc);
         } catch (e) {
-            console.log(" Gagal kirim ke group " + groupId[i] + ": " + e.message);
+            console.log("❌ Gagal kirim ke group " + groupId[i] + ": " + e.message);
         };
     };
 };
