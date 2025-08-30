@@ -646,22 +646,22 @@
         // URL Router Functions
         function updateURL(fileName) {
             if (fileName) {
-                history.pushState({fileName: fileName}, '', `/code/${fileName}`);
+                history.pushState({fileName: fileName}, '', `#code/${fileName}`);
             } else {
-                history.pushState({}, '', '/');
+                history.pushState({}, '', '#');
             }
         }
 
         function parseURL() {
-            const path = window.location.pathname;
-            const codeMatch = path.match(/^\/code\/(.+)$/);
+            const hash = window.location.hash;
+            const codeMatch = hash.match(/^#code\/(.+)$/);
             if (codeMatch) {
-                return codeMatch[1];
+                return decodeURIComponent(codeMatch[1]);
             }
-            // Support for root level files like /testing.js
-            const rootMatch = path.match(/^\/([^\/]+\.[a-zA-Z0-9]+)$/);
+            // Support for root level files like #testing.js
+            const rootMatch = hash.match(/^#([^\/]+\.[a-zA-Z0-9]+)$/);
             if (rootMatch) {
-                return rootMatch[1];
+                return decodeURIComponent(rootMatch[1]);
             }
             return null;
         }
@@ -918,6 +918,16 @@
 
         // Handle browser navigation
         window.addEventListener('popstate', function(e) {
+            const fileName = parseURL();
+            if (fileName) {
+                openCodeView(fileName);
+            } else {
+                loadDashboard();
+            }
+        });
+
+        // Handle hash changes for direct URL access
+        window.addEventListener('hashchange', function(e) {
             const fileName = parseURL();
             if (fileName) {
                 openCodeView(fileName);
