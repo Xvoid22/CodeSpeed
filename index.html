@@ -17,40 +17,25 @@
 
         :root {
             --primary-blue: #3b82f6;
-            --secondary-blue: #1e40af;
+            --secondary-blue: #206be5;
             --dark-bg: #0f172a;
             --dark-card: #1e293b;
-            --light-bg: #f8fafc;
-            --light-card: #ffffff;
-            --text-dark: #0f172a;
             --text-light: #f1f5f9;
-            --border-light: #e2e8f0;
             --border-dark: #334155;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: all 0.3s ease;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #0c1929 100%);
+            color: var(--text-light);
             overflow-x: hidden;
         }
 
-        /* Light Theme */
-        body.light {
-            background: linear-gradient(135deg, var(--light-bg) 0%, #e0f2fe 100%);
-            color: var(--text-dark);
-        }
-
-        /* Dark Theme */
-        body.dark {
-            background: linear-gradient(135deg, var(--dark-bg) 0%, #0c1929 100%);
-            color: var(--text-light);
-        }
-
-        /* Header */
         .header {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(14, 21, 39, 0.95);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-light);
+            border-bottom: 1px solid #091529;
+            border-width: 2px;
             padding: 1rem 2rem;
             position: fixed;
             top: 0;
@@ -60,11 +45,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-
-        body.dark .header {
-            background: rgba(15, 23, 42, 0.95);
-            border-bottom-color: var(--border-dark);
         }
 
         .logo {
@@ -83,26 +63,12 @@
             gap: 1rem;
         }
 
-        .theme-toggle {
-            background: none;
-            border: 2px solid var(--primary-blue);
-            color: var(--primary-blue);
-            padding: 0.5rem;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .theme-toggle:hover {
-            background: var(--primary-blue);
-            color: white;
-        }
-
         .menu-toggle {
             background: var(--primary-blue);
             border: none;
             color: white;
-            padding: 0.75rem;
+            font-size: 15px;
+            padding: 0.65rem;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -130,24 +96,18 @@
             background: var(--secondary-blue);
         }
 
-        /* Sidebar Navigation */
         .sidebar {
             position: fixed;
             top: 0;
             left: -300px;
             width: 300px;
             height: 100vh;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(15px);
-            border-right: 1px solid var(--border-light);
+            border-right: 1px solid var(--border-dark);
             transition: left 0.3s ease;
             z-index: 1001;
             padding: 2rem;
-        }
-
-        body.dark .sidebar {
-            background: rgba(15, 23, 42, 0.95);
-            border-right-color: var(--border-dark);
         }
 
         .sidebar.open {
@@ -194,7 +154,6 @@
             transform: translateX(5px);
         }
 
-        /* Overlay */
         .overlay {
             position: fixed;
             top: 0;
@@ -213,7 +172,6 @@
             visibility: visible;
         }
 
-        /* Main Content */
         .main {
             margin-top: 80px;
             padding: 2rem;
@@ -242,7 +200,6 @@
             margin: 0 auto;
         }
 
-        /* Code Grid */
         .code-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -251,19 +208,14 @@
         }
 
         .code-card {
-            background: var(--light-card);
-            border: 1px solid var(--border-light);
+            background: var(--dark-card);
+            border: 1px solid var(--border-dark);
             border-radius: 12px;
             padding: 1.5rem;
             transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
             overflow: hidden;
-        }
-
-        body.dark .code-card {
-            background: var(--dark-card);
-            border-color: var(--border-dark);
         }
 
         .code-card::before {
@@ -278,10 +230,6 @@
 
         .code-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1);
-        }
-
-        body.dark .code-card:hover {
             box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
         }
 
@@ -306,7 +254,6 @@
             opacity: 0.6;
         }
 
-        /* Full Screen Code View */
         .code-view {
             display: none;
             position: fixed;
@@ -314,13 +261,10 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: var(--light-bg);
+            background: var(--dark-bg);
             z-index: 1500;
             overflow: hidden;
-        }
-
-        body.dark .code-view {
-            background: var(--dark-bg);
+            padding: 2rem;
         }
 
         .code-view.active {
@@ -329,18 +273,15 @@
         }
 
         .code-view-header {
-            background: var(--light-card);
-            border-bottom: 1px solid var(--border-light);
-            padding: 1rem 2rem;
+            background: var(--dark-card);
+            border: 1px solid var(--border-dark);
+            border-radius: 12px 12px 0 0;
+            padding: 1.5rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-shrink: 0;
-        }
-
-        body.dark .code-view-header {
-            background: var(--dark-card);
-            border-bottom-color: var(--border-dark);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         .code-view-title {
@@ -393,16 +334,22 @@
 
         .code-view-content {
             flex: 1;
-            overflow: hidden;
             display: flex;
             flex-direction: column;
+            background: var(--dark-card);
+            border: 1px solid var(--border-dark);
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
 
         .code-display {
             flex: 1;
-            background: #2d3748;
+            background: #1a202c;
             overflow: auto;
             margin: 0;
+            border-radius: 0 0 12px 12px;
         }
 
         .code-display pre {
@@ -413,13 +360,13 @@
             line-height: 1.6;
             height: 100%;
             min-height: 100%;
+            background: transparent;
         }
 
         .code-display code {
             font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
         }
 
-        /* Loading Animation */
         .loading {
             display: flex;
             flex-direction: column;
@@ -431,15 +378,10 @@
         .spinner {
             width: 50px;
             height: 50px;
-            border: 3px solid var(--border-light);
+            border: 3px solid var(--border-dark);
             border-top: 3px solid var(--primary-blue);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-        }
-
-        body.dark .spinner {
-            border-color: var(--border-dark);
-            border-top-color: var(--primary-blue);
         }
 
         @keyframes spin {
@@ -447,7 +389,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Error State */
         .error-state {
             text-align: center;
             padding: 3rem;
@@ -460,13 +401,16 @@
             margin-bottom: 1rem;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .header {
                 padding: 1rem;
             }
 
             .main {
+                padding: 1rem;
+            }
+
+            .code-view {
                 padding: 1rem;
             }
 
@@ -496,7 +440,6 @@
             }
         }
 
-        /* Toast Notification */
         .toast {
             position: fixed;
             bottom: 2rem;
@@ -516,7 +459,6 @@
             opacity: 1;
         }
 
-        /* Hide scrollbar but keep functionality */
         .code-display::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -536,7 +478,7 @@
         }
     </style>
 </head>
-<body class="light">
+<body>
     <!-- Header -->
     <header class="header">
         <div class="logo" onclick="navigateHome()">
@@ -547,9 +489,6 @@
             <button class="back-btn" id="backBtn" onclick="navigateHome()">
                 <i class="fas fa-arrow-left"></i>
                 Kembali
-            </button>
-            <button class="theme-toggle" onclick="toggleTheme()">
-                <i class="fas fa-moon"></i>
             </button>
             <button class="menu-toggle" onclick="toggleSidebar()">
                 <i class="fas fa-bars"></i>
@@ -573,21 +512,15 @@
                 </a>
             </li>
             <li>
-                <a href="https://t.me/your_channel" target="_blank">
+                <a href="https://t.me/xvoidshop" target="_blank">
                     <i class="fab fa-telegram"></i>
                     Telegram Channel
                 </a>
             </li>
             <li>
-                <a href="mailto:your.email@example.com">
+                <a href="https://t.me/Xvoid10">
                     <i class="fas fa-envelope"></i>
                     Contact Me
-                </a>
-            </li>
-            <li>
-                <a href="https://github.com/Xvoid22/CodeSpeed" target="_blank">
-                    <i class="fab fa-github"></i>
-                    GitHub Repository
                 </a>
             </li>
         </ul>
@@ -643,7 +576,6 @@
         let currentCode = '';
         let currentFileName = '';
 
-        // URL Router Functions
         function updateURL(fileName) {
             if (fileName) {
                 history.pushState({fileName: fileName}, '', `#code/${fileName}`);
@@ -658,7 +590,6 @@
             if (codeMatch) {
                 return decodeURIComponent(codeMatch[1]);
             }
-            // Support for root level files like #testing.js
             const rootMatch = hash.match(/^#([^\/]+\.[a-zA-Z0-9]+)$/);
             if (rootMatch) {
                 return decodeURIComponent(rootMatch[1]);
@@ -676,36 +607,6 @@
             loadDashboard();
         }
 
-        // Theme Management
-        function toggleTheme() {
-            const body = document.body;
-            const themeIcon = document.querySelector('.theme-toggle i');
-            
-            if (body.classList.contains('light')) {
-                body.classList.remove('light');
-                body.classList.add('dark');
-                themeIcon.className = 'fas fa-sun';
-                // Store in memory instead of localStorage
-                window.currentTheme = 'dark';
-            } else {
-                body.classList.remove('dark');
-                body.classList.add('light');
-                themeIcon.className = 'fas fa-moon';
-                window.currentTheme = 'light';
-            }
-        }
-
-        // Load saved theme
-        function loadTheme() {
-            const savedTheme = window.currentTheme || 'light';
-            const body = document.body;
-            const themeIcon = document.querySelector('.theme-toggle i');
-            
-            body.className = savedTheme;
-            themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-        }
-
-        // Sidebar Management
         function toggleSidebar() {
             const sidebar = document.querySelector('.sidebar');
             const overlay = document.querySelector('.overlay');
@@ -722,7 +623,6 @@
             overlay.classList.remove('active');
         }
 
-        // GitHub API Functions
         async function fetchCodeFiles() {
             try {
                 const response = await fetch('https://api.github.com/repos/Xvoid22/CodeSpeed/contents/upload');
@@ -744,20 +644,27 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const fileData = await response.json();
-                return atob(fileData.content);
+                
+                const binaryString = atob(fileData.content);
+                const bytes = new Uint8Array(binaryString.length);
+                
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                
+                const decoder = new TextDecoder('utf-8');
+                return decoder.decode(bytes);
             } catch (error) {
                 console.error('Error fetching file content:', error);
                 return '';
             }
         }
 
-        // Dashboard Functions
         async function loadDashboard() {
             const mainContent = document.getElementById('mainContent');
             const codeView = document.getElementById('codeView');
             const backBtn = document.getElementById('backBtn');
             
-            // Hide code view and show main content
             codeView.classList.remove('active');
             mainContent.style.display = 'block';
             backBtn.style.display = 'none';
@@ -788,12 +695,11 @@
             files.forEach(file => {
                 const fileName = file.name;
                 const fileExt = fileName.split('.').pop().toLowerCase();
-                const displayName = fileName.replace(/\.[^/.]+$/, ""); // Remove extension
+                const displayName = fileName.replace(/\.[^/.]+$/, ""); 
                 
                 let icon = 'fas fa-file-code';
                 let language = 'text';
                 
-                // Set icon and language based on file extension
                 switch(fileExt) {
                     case 'js':
                         icon = 'fab fa-js-square';
@@ -841,7 +747,6 @@
             closeSidebar();
         }
 
-        // Code View Functions
         async function openCodeView(fileName) {
             const mainContent = document.getElementById('mainContent');
             const codeView = document.getElementById('codeView');
@@ -851,21 +756,17 @@
             
             currentFileName = fileName;
             
-            // Hide main content and show code view
             mainContent.style.display = 'none';
             codeView.classList.add('active');
             backBtn.style.display = 'flex';
             
-            // Update title and show loading
             codeViewTitle.textContent = fileName;
             codeContent.textContent = 'Loading...';
             
-            // Fetch and display content
             const content = await fetchFileContent(fileName);
             currentCode = content;
             codeContent.textContent = content;
             
-            // Apply syntax highlighting
             const fileExt = fileName.split('.').pop().toLowerCase();
             let language = 'javascript';
             
@@ -884,17 +785,14 @@
             codeContent.className = `language-${language}`;
             Prism.highlightElement(codeContent);
             
-            // Close sidebar if open
             closeSidebar();
         }
 
-        // Copy Code Function
         async function copyCode() {
             try {
                 await navigator.clipboard.writeText(currentCode);
                 showToast('Code berhasil disalin ke clipboard!');
             } catch (err) {
-                // Fallback for older browsers
                 const textArea = document.createElement('textarea');
                 textArea.value = currentCode;
                 document.body.appendChild(textArea);
@@ -905,7 +803,6 @@
             }
         }
 
-        // Toast Function
         function showToast(message) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
@@ -916,7 +813,6 @@
             }, 3000);
         }
 
-        // Handle browser navigation
         window.addEventListener('popstate', function(e) {
             const fileName = parseURL();
             if (fileName) {
@@ -926,7 +822,6 @@
             }
         });
 
-        // Handle hash changes for direct URL access
         window.addEventListener('hashchange', function(e) {
             const fileName = parseURL();
             if (fileName) {
@@ -936,21 +831,16 @@
             }
         });
 
-        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            loadTheme();
             
-            // Check if URL has a file path on initial load
             const fileName = parseURL();
             if (fileName) {
-                // Don't update URL since we're already on the correct path
                 openCodeView(fileName);
             } else {
                 loadDashboard();
             }
         });
 
-        // Close code view on escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 navigateHome();
