@@ -74,6 +74,7 @@
             font-size: 1.5rem;
             font-weight: bold;
             color: var(--primary-blue);
+            cursor: pointer;
         }
 
         .header-controls {
@@ -110,6 +111,23 @@
         .menu-toggle:hover {
             background: var(--secondary-blue);
             transform: translateY(-2px);
+        }
+
+        .back-btn {
+            background: var(--primary-blue);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: var(--secondary-blue);
         }
 
         /* Sidebar Navigation */
@@ -288,123 +306,56 @@
             opacity: 0.6;
         }
 
-        /* Loading Animation */
-        .loading {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            padding: 3rem;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid var(--border-light);
-            border-top: 3px solid var(--primary-blue);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        body.dark .spinner {
-            border-color: var(--border-dark);
-            border-top-color: var(--primary-blue);
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Fullscreen Code View */
-        .fullscreen-view {
+        /* Full Screen Code View */
+        .code-view {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
             background: var(--light-bg);
-            display: none;
-            z-index: 2000;
-            overflow-y: auto;
+            z-index: 1500;
+            overflow: hidden;
         }
 
-        body.dark .fullscreen-view {
+        body.dark .code-view {
             background: var(--dark-bg);
         }
 
-        .fullscreen-view.active {
-            display: block;
-            animation: slideInFromRight 0.3s ease;
+        .code-view.active {
+            display: flex;
+            flex-direction: column;
         }
 
-        @keyframes slideInFromRight {
-            from {
-                opacity: 0;
-                transform: translateX(100px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .fullscreen-header {
+        .code-view-header {
             background: var(--light-card);
             border-bottom: 1px solid var(--border-light);
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            flex-shrink: 0;
         }
 
-        body.dark .fullscreen-header {
+        body.dark .code-view-header {
             background: var(--dark-card);
             border-bottom-color: var(--border-dark);
         }
 
-        .fullscreen-title {
+        .code-view-title {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            color: var(--primary-blue);
-            font-size: 1.3rem;
+            gap: 1rem;
+            font-size: 1.5rem;
             font-weight: bold;
+            color: var(--primary-blue);
         }
 
-        .back-btn {
-            background: var(--primary-blue);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .back-btn:hover {
-            background: var(--secondary-blue);
-            transform: translateY(-2px);
-        }
-
-        .fullscreen-body {
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .fullscreen-actions {
+        .code-view-actions {
             display: flex;
             gap: 1rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
+            align-items: center;
         }
 
         .btn {
@@ -440,64 +391,60 @@
             color: white;
         }
 
-        .fullscreen-code {
-            background: #2d3748;
-            border-radius: 12px;
+        .code-view-content {
+            flex: 1;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .code-header {
-            background: #1a202c;
-            padding: 1rem 1.5rem;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #4a5568;
+            flex-direction: column;
         }
 
-        .code-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            color: #e2e8f0;
+        .code-display {
+            flex: 1;
+            background: #2d3748;
+            overflow: auto;
+            margin: 0;
         }
 
-        .line-numbers {
-            color: #718096;
-            font-size: 0.875rem;
-        }
-
-        .fullscreen-code pre {
+        .code-display pre {
             margin: 0;
             padding: 2rem;
-            overflow-x: auto;
-            font-size: 15px;
+            overflow: auto;
+            font-size: 16px;
             line-height: 1.6;
-            min-height: 400px;
+            height: 100%;
+            min-height: 100%;
         }
 
-        .preview-section {
-            background: var(--light-card);
-            border: 2px solid var(--border-light);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-top: 2rem;
+        .code-display code {
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
         }
 
-        body.dark .preview-section {
-            background: var(--dark-card);
-            border-color: var(--border-dark);
-        }
-
-        .preview-header {
+        /* Loading Animation */
+        .loading {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-            color: var(--primary-blue);
-            font-weight: bold;
-            font-size: 1.1rem;
+            gap: 1rem;
+            padding: 3rem;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border-light);
+            border-top: 3px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        body.dark .spinner {
+            border-color: var(--border-dark);
+            border-top-color: var(--primary-blue);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* Error State */
@@ -532,17 +479,20 @@
                 gap: 1rem;
             }
 
-            .modal-content {
-                width: 95%;
-                margin: 1rem;
-            }
-
-            .modal-body {
+            .code-view-header {
                 padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
             }
 
-            .code-actions {
+            .code-view-actions {
                 flex-direction: column;
+            }
+
+            .code-display pre {
+                padding: 1rem;
+                font-size: 14px;
             }
         }
 
@@ -565,16 +515,39 @@
             transform: translateY(0);
             opacity: 1;
         }
+
+        /* Hide scrollbar but keep functionality */
+        .code-display::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .code-display::-webkit-scrollbar-track {
+            background: #1a202c;
+        }
+
+        .code-display::-webkit-scrollbar-thumb {
+            background: #4a5568;
+            border-radius: 4px;
+        }
+
+        .code-display::-webkit-scrollbar-thumb:hover {
+            background: #718096;
+        }
     </style>
 </head>
 <body class="light">
     <!-- Header -->
     <header class="header">
-        <div class="logo">
+        <div class="logo" onclick="loadDashboard()">
             <i class="fas fa-code"></i>
             <span>CodeSpeed</span>
         </div>
         <div class="header-controls">
+            <button class="back-btn" id="backBtn" onclick="loadDashboard()">
+                <i class="fas fa-arrow-left"></i>
+                Kembali
+            </button>
             <button class="theme-toggle" onclick="toggleTheme()">
                 <i class="fas fa-moon"></i>
             </button>
@@ -624,7 +597,7 @@
     <div class="overlay" onclick="closeSidebar()"></div>
 
     <!-- Main Content -->
-    <main class="main">
+    <main class="main" id="mainContent">
         <div class="hero">
             <h1>Welcome to CodeSpeed</h1>
             <p>Discover and share useful code snippets with the community. Browse through curated collections of helpful code.</p>
@@ -638,51 +611,27 @@
         </div>
     </main>
 
-    <!-- Fullscreen Code View -->
-    <div class="fullscreen-view" id="fullscreenView">
-        <div class="fullscreen-header">
-            <div class="fullscreen-title">
-                <i class="fas fa-code"></i>
-                <span id="fullscreenTitle">Code Preview</span>
+    <!-- Full Screen Code View -->
+    <div class="code-view" id="codeView">
+        <div class="code-view-header">
+            <div class="code-view-title">
+                <i class="fas fa-file-code"></i>
+                <span id="codeViewTitle">Code Preview</span>
             </div>
-            <button class="back-btn" onclick="closeFullscreen()">
-                <i class="fas fa-arrow-left"></i>
-                Kembali ke Dashboard
-            </button>
-        </div>
-        <div class="fullscreen-body">
-            <div class="fullscreen-actions">
+            <div class="code-view-actions">
                 <button class="btn btn-primary" onclick="copyCode()">
                     <i class="fas fa-copy"></i>
                     Salin Code
                 </button>
-                <button class="btn btn-secondary" onclick="toggleFullscreenPreview()">
-                    <i class="fas fa-eye"></i>
-                    Tampilkan Preview
-                </button>
-                <button class="btn btn-secondary" onclick="downloadCode()">
-                    <i class="fas fa-download"></i>
-                    Download File
+                <button class="btn btn-secondary" onclick="closeCodeView()">
+                    <i class="fas fa-times"></i>
+                    Tutup
                 </button>
             </div>
-            
-            <div class="fullscreen-code">
-                <div class="code-header">
-                    <div class="code-info">
-                        <span id="fileIcon"><i class="fas fa-file-code"></i></span>
-                        <span id="fileName">filename.js</span>
-                        <span class="line-numbers" id="lineCount">0 lines</span>
-                    </div>
-                </div>
-                <pre><code id="fullscreenCodeContent"></code></pre>
-            </div>
-            
-            <div class="preview-section" id="fullscreenPreview" style="display: none;">
-                <div class="preview-header">
-                    <i class="fas fa-play-circle"></i>
-                    <span>Live Preview</span>
-                </div>
-                <div id="fullscreenPreviewContent"></div>
+        </div>
+        <div class="code-view-content">
+            <div class="code-display">
+                <pre><code id="codeContent"></code></pre>
             </div>
         </div>
     </div>
@@ -703,18 +652,19 @@
                 body.classList.remove('light');
                 body.classList.add('dark');
                 themeIcon.className = 'fas fa-sun';
-                localStorage.setItem('theme', 'dark');
+                // Store in memory instead of localStorage
+                window.currentTheme = 'dark';
             } else {
                 body.classList.remove('dark');
                 body.classList.add('light');
                 themeIcon.className = 'fas fa-moon';
-                localStorage.setItem('theme', 'light');
+                window.currentTheme = 'light';
             }
         }
 
         // Load saved theme
         function loadTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedTheme = window.currentTheme || 'light';
             const body = document.body;
             const themeIcon = document.querySelector('.theme-toggle i');
             
@@ -770,6 +720,15 @@
 
         // Dashboard Functions
         async function loadDashboard() {
+            const mainContent = document.getElementById('mainContent');
+            const codeView = document.getElementById('codeView');
+            const backBtn = document.getElementById('backBtn');
+            
+            // Hide code view and show main content
+            codeView.classList.remove('active');
+            mainContent.style.display = 'block';
+            backBtn.style.display = 'none';
+            
             const dashboard = document.getElementById('dashboard');
             dashboard.innerHTML = `
                 <div class="loading">
@@ -828,7 +787,7 @@
                 }
 
                 gridHTML += `
-                    <div class="code-card" onclick="openFullscreenCode('${fileName}')">
+                    <div class="code-card" onclick="openCodeView('${fileName}')">
                         <h3 class="code-title">
                             <i class="${icon}"></i>
                             ${displayName}
@@ -849,182 +808,62 @@
             closeSidebar();
         }
 
-        // Fullscreen Code Functions
-        async function openFullscreenCode(fileName) {
-            const fullscreenView = document.getElementById('fullscreenView');
-            const fullscreenTitle = document.getElementById('fullscreenTitle');
-            const fullscreenCodeContent = document.getElementById('fullscreenCodeContent');
-            const fileNameSpan = document.getElementById('fileName');
-            const fileIcon = document.getElementById('fileIcon');
-            const lineCount = document.getElementById('lineCount');
-            const fullscreenPreview = document.getElementById('fullscreenPreview');
+        // Code View Functions
+        async function openCodeView(fileName) {
+            const mainContent = document.getElementById('mainContent');
+            const codeView = document.getElementById('codeView');
+            const codeViewTitle = document.getElementById('codeViewTitle');
+            const codeContent = document.getElementById('codeContent');
+            const backBtn = document.getElementById('backBtn');
             
             currentFileName = fileName;
-            fullscreenTitle.textContent = fileName;
-            fileNameSpan.textContent = fileName;
             
-            fullscreenView.classList.add('active');
-            fullscreenCodeContent.textContent = 'Loading...';
+            // Hide main content and show code view
+            mainContent.style.display = 'none';
+            codeView.classList.add('active');
+            backBtn.style.display = 'flex';
             
+            // Update title and show loading
+            codeViewTitle.textContent = fileName;
+            codeContent.textContent = 'Loading...';
+            
+            // Fetch and display content
             const content = await fetchFileContent(fileName);
             currentCode = content;
-            fullscreenCodeContent.textContent = content;
+            codeContent.textContent = content;
             
-            // Count lines
-            const lines = content.split('\n').length;
-            lineCount.textContent = `${lines} lines`;
-            
-            // Set file icon
+            // Apply syntax highlighting
             const fileExt = fileName.split('.').pop().toLowerCase();
-            let icon = 'fas fa-file-code';
             let language = 'javascript';
             
             switch(fileExt) {
-                case 'js':
-                    icon = 'fab fa-js-square';
-                    language = 'javascript';
-                    break;
-                case 'html':
-                    icon = 'fab fa-html5';
-                    language = 'html';
-                    break;
-                case 'css':
-                    icon = 'fab fa-css3-alt';
-                    language = 'css';
-                    break;
-                case 'py':
-                    icon = 'fab fa-python';
-                    language = 'python';
-                    break;
-                case 'json':
-                    icon = 'fas fa-brackets-curly';
-                    language = 'json';
-                    break;
-                case 'md':
-                    icon = 'fab fa-markdown';
-                    language = 'markdown';
-                    break;
+                case 'html': language = 'html'; break;
+                case 'css': language = 'css'; break;
+                case 'py': language = 'python'; break;
+                case 'json': language = 'json'; break;
+                case 'md': language = 'markdown'; break;
+                case 'php': language = 'php'; break;
+                case 'java': language = 'java'; break;
+                case 'cpp': language = 'cpp'; break;
+                case 'c': language = 'c'; break;
             }
             
-            fileIcon.innerHTML = `<i class="${icon}"></i>`;
-            fullscreenCodeContent.className = `language-${language}`;
-            Prism.highlightElement(fullscreenCodeContent);
+            codeContent.className = `language-${language}`;
+            Prism.highlightElement(codeContent);
             
-            // Hide preview by default
-            fullscreenPreview.style.display = 'none';
-            
-            // Hide main content
-            document.querySelector('.main').style.display = 'none';
-            document.querySelector('.header').style.display = 'none';
+            // Close sidebar if open
+            closeSidebar();
         }
 
-        function closeFullscreen() {
-            const fullscreenView = document.getElementById('fullscreenView');
-            fullscreenView.classList.remove('active');
+        function closeCodeView() {
+            const mainContent = document.getElementById('mainContent');
+            const codeView = document.getElementById('codeView');
+            const backBtn = document.getElementById('backBtn');
             
-            // Show main content
-            document.querySelector('.main').style.display = 'block';
-            document.querySelector('.header').style.display = 'flex';
-        }
-
-        // Download Code Function
-        function downloadCode() {
-            const blob = new Blob([currentCode], { type: 'text/plain' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = currentFileName;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-            showToast(`File ${currentFileName} berhasil didownload!`);
-        }
-
-        // Preview Function for Fullscreen
-        function toggleFullscreenPreview() {
-            const fullscreenPreview = document.getElementById('fullscreenPreview');
-            const fullscreenPreviewContent = document.getElementById('fullscreenPreviewContent');
-            const btn = event.target.closest('.btn-secondary');
-            
-            if (fullscreenPreview.style.display === 'none') {
-                fullscreenPreview.style.display = 'block';
-                btn.innerHTML = '<i class="fas fa-eye-slash"></i> Sembunyikan Preview';
-                
-                // Generate preview based on file type
-                const fileExt = currentFileName.split('.').pop().toLowerCase();
-                
-                if (fileExt === 'html') {
-                    fullscreenPreviewContent.innerHTML = `
-                        <iframe srcdoc="${currentCode.replace(/"/g, '&quot;')}" 
-                                style="width: 100%; min-height: 400px; border: 1px solid var(--border-light); border-radius: 8px;">
-                        </iframe>
-                    `;
-                } else if (fileExt === 'css') {
-                    fullscreenPreviewContent.innerHTML = `
-                        <div style="background: #f8f9fa; padding: 2rem; border-radius: 8px;">
-                            <h4 style="margin-bottom: 1rem; color: var(--primary-blue);">CSS Styling Preview</h4>
-                            <style>${currentCode}</style>
-                            <div style="padding: 2rem; border: 1px solid #dee2e6; border-radius: 8px; background: white;">
-                                <h3>Sample Heading</h3>
-                                <p>Ini adalah contoh paragraf untuk melihat efek dari CSS yang Anda tulis.</p>
-                                <button>Sample Button</button>
-                                <div class="sample-div" style="margin-top: 1rem; padding: 1rem; background: #e3f2fd;">
-                                    Sample div dengan class "sample-div"
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                } else if (fileExt === 'js') {
-                    fullscreenPreviewContent.innerHTML = `
-                        <div style="background: #f8f9fa; padding: 2rem; border-radius: 8px;">
-                            <h4 style="margin-bottom: 1rem; color: var(--primary-blue);">JavaScript Code Analysis</h4>
-                            <div style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #dee2e6;">
-                                <p><strong>File:</strong> ${currentFileName}</p>
-                                <p><strong>Lines:</strong> ${currentCode.split('\n').length}</p>
-                                <p><strong>Characters:</strong> ${currentCode.length}</p>
-                                <p><strong>Functions:</strong> ${(currentCode.match(/function\s+\w+/g) || []).length}</p>
-                                <p><strong>Variables:</strong> ${(currentCode.match(/(let|const|var)\s+\w+/g) || []).length}</p>
-                            </div>
-                            <div style="margin-top: 1rem; padding: 1rem; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeaa7;">
-                                <p><strong>Note:</strong> Untuk keamanan, JavaScript code tidak dijalankan secara otomatis. Anda dapat menyalin code dan menjalankannya di environment yang sesuai.</p>
-                            </div>
-                        </div>
-                    `;
-                } else if (fileExt === 'json') {
-                    try {
-                        const jsonData = JSON.parse(currentCode);
-                        fullscreenPreviewContent.innerHTML = `
-                            <div style="background: #f8f9fa; padding: 2rem; border-radius: 8px;">
-                                <h4 style="margin-bottom: 1rem; color: var(--primary-blue);">JSON Structure</h4>
-                                <pre style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #dee2e6; overflow-x: auto;">${JSON.stringify(jsonData, null, 2)}</pre>
-                            </div>
-                        `;
-                    } catch (e) {
-                        fullscreenPreviewContent.innerHTML = `
-                            <div style="background: #f8d7da; padding: 2rem; border-radius: 8px; border: 1px solid #f5c6cb;">
-                                <h4 style="margin-bottom: 1rem; color: #721c24;">Invalid JSON</h4>
-                                <p>JSON tidak valid: ${e.message}</p>
-                            </div>
-                        `;
-                    }
-                } else {
-                    fullscreenPreviewContent.innerHTML = `
-                        <div style="background: #f8f9fa; padding: 2rem; border-radius: 8px;">
-                            <h4 style="margin-bottom: 1rem; color: var(--primary-blue);">File Information</h4>
-                            <div style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #dee2e6;">
-                                <p><strong>File Type:</strong> ${fileExt.toUpperCase()}</p>
-                                <p><strong>Size:</strong> ${currentCode.length} characters</p>
-                                <p><strong>Lines:</strong> ${currentCode.split('\n').length}</p>
-                                <p><strong>Preview:</strong> Tidak tersedia untuk file ${fileExt.toUpperCase()}</p>
-                            </div>
-                        </div>
-                    `;
-                }
-            } else {
-                fullscreenPreview.style.display = 'none';
-                btn.innerHTML = '<i class="fas fa-eye"></i> Tampilkan Preview';
-            }
+            // Show main content and hide code view
+            codeView.classList.remove('active');
+            mainContent.style.display = 'block';
+            backBtn.style.display = 'none';
         }
 
         // Copy Code Function
@@ -1041,142 +880,6 @@
                 document.execCommand('copy');
                 document.body.removeChild(textArea);
                 showToast('Code berhasil disalin ke clipboard!');
-            }
-        } 'none') {
-                previewContainer.style.display = 'block';
-                btn.innerHTML = '<i class="fas fa-eye-slash"></i> Hide Preview';
-                
-                // Generate preview based on file type
-                const fileExt = currentFileName.split('.').pop().toLowerCase();
-                
-                if (fileExt === 'html') {
-                    previewContent.innerHTML = currentCode;
-                } else if (fileExt === 'css') {
-                    previewContent.innerHTML = `
-                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px;">
-                            <p><strong>CSS Preview:</strong></p>
-                            <style>${currentCode}</style>
-                            <div style="padding: 1rem; border: 1px solid #dee2e6;">
-                                Sample content dengan styling yang diterapkan
-                            </div>
-                        </div>
-                    `;
-                } else if (fileExt === 'js') {
-                    previewContent.innerHTML = `
-                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px;">
-                            <p><strong>JavaScript Preview:</strong></p>
-                            <p>Klik tombol di bawah untuk menjalankan code JavaScript:</p>
-                            <button onclick="runJavaScript()" style="background: var(--primary-blue); color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">
-                                Run Code
-                            </button>
-                            <div id="jsOutput" style="margin-top: 1rem; padding: 1rem; background: #ffffff; border: 1px solid #dee2e6; border-radius: 4px; min-height: 50px;"></div>
-                        </div>
-                    `;
-                } else {
-                    previewContent.innerHTML = `
-                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px;">
-                            <p><strong>Preview tidak tersedia untuk file ${fileExt.toUpperCase()}</strong></p>
-                            <p>File ini berisi ${currentCode.split('\n').length} baris code.</p>
-                        </div>
-                    `;
-                }
-            } else {
-                previewContainer.style.display = 'none';
-                btn.innerHTML = '<i class="fas fa-eye"></i> Preview';
-            }
-        }
-
-        function runJavaScript() {
-            const output = document.getElementById('jsOutput');
-            try {
-                // Create a safe environment to run the code
-                const originalConsoleLog = console.log;
-                let capturedOutput = [];
-                
-                console.log = function(...args) {
-                    capturedOutput.push(args.join(' '));
-                    originalConsoleLog.apply(console, args);
-                };
-                
-                eval(currentCode);
-                
-                console.log = originalConsoleLog;
-                
-                if (capturedOutput.length > 0) {
-                    output.innerHTML = capturedOutput.map(line => `<div>${line}</div>`).join('');
-                } else {
-                    output.innerHTML = '<div style="color: #28a745;">Code berhasil dijalankan! (Tidak ada output console)</div>';
-                }
-            } catch (error) {
-                output.innerHTML = `<div style="color: #dc3545;">Error: ${error.message}</div>`;
-            }
-        } 'none') {
-                previewContainer.style.display = 'block';
-                btn.innerHTML = '<i class="fas fa-eye-slash"></i> Hide Preview';
-                
-                // Generate preview based on file type
-                const fileExt = currentFileName.split('.').pop().toLowerCase();
-                
-                if (fileExt === 'html') {
-                    previewContent.innerHTML = currentCode;
-                } else if (fileExt === 'css') {
-                    previewContent.innerHTML = `
-                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px;">
-                            <p><strong>CSS Preview:</strong></p>
-                            <style>${currentCode}</style>
-                            <div style="padding: 1rem; border: 1px solid #dee2e6;">
-                                Sample content dengan styling yang diterapkan
-                            </div>
-                        </div>
-                    `;
-                } else if (fileExt === 'js') {
-                    previewContent.innerHTML = `
-                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px;">
-                            <p><strong>JavaScript Preview:</strong></p>
-                            <p>Klik tombol di bawah untuk menjalankan code JavaScript:</p>
-                            <button onclick="runJavaScript()" style="background: var(--primary-blue); color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">
-                                Run Code
-                            </button>
-                            <div id="jsOutput" style="margin-top: 1rem; padding: 1rem; background: #ffffff; border: 1px solid #dee2e6; border-radius: 4px; min-height: 50px;"></div>
-                        </div>
-                    `;
-                } else {
-                    previewContent.innerHTML = `
-                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px;">
-                            <p><strong>Preview tidak tersedia untuk file ${fileExt.toUpperCase()}</strong></p>
-                            <p>File ini berisi ${currentCode.split('\n').length} baris code.</p>
-                        </div>
-                    `;
-                }
-            } else {
-                previewContainer.style.display = 'none';
-                btn.innerHTML = '<i class="fas fa-eye"></i> Preview';
-            }
-        }
-
-        function runJavaScript() {
-            const output = document.getElementById('jsOutput');
-            try {
-                // Create a safe environment to run the code
-                const originalConsoleLog = console.log;
-                let capturedOutput = [];
-                
-                console.log = function(...args) {
-                    capturedOutput.push(args.join(' '));
-                    originalConsoleLog.apply(console, args);
-                };
-                
-                eval(currentCode);
-                
-                console.log = originalConsoleLog;
-                
-                if (capturedOutput.length > 0) {
-                    output.innerHTML = capturedOutput.map(line => `<div>${line}</div>`).join('');
-                } else {
-                    output.innerHTML = '<div style="color: #28a745;">Code berhasil dijalankan! (Tidak ada output console)</div>';
-                }
-            } catch (error) {
-                output.innerHTML = `<div style="color: #dc3545;">Error: ${error.message}</div>`;
             }
         }
 
@@ -1197,11 +900,19 @@
             loadDashboard();
         });
 
-        // Close fullscreen on escape key
+        // Close code view on escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                closeFullscreen();
+                closeCodeView();
                 closeSidebar();
+            }
+        });
+
+        // Handle browser back button
+        window.addEventListener('popstate', function(e) {
+            const codeView = document.getElementById('codeView');
+            if (codeView.classList.contains('active')) {
+                closeCodeView();
             }
         });
     </script>
