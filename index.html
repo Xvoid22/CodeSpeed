@@ -1,15 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CodeSpeed - Code Sharing Platform</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-dark.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-html.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -18,53 +16,89 @@
         }
 
         :root {
-            --primary-blue: #1e40af;
-            --secondary-blue: #3b82f6;
-            --light-blue: #60a5fa;
+            --primary-blue: #3b82f6;
+            --secondary-blue: #1e40af;
             --dark-bg: #0f172a;
-            --card-bg: #1e293b;
-            --text-light: #f8fafc;
-            --text-gray: #94a3b8;
-            --border-color: #334155;
-            --hover-bg: #2563eb;
+            --dark-card: #1e293b;
+            --light-bg: #f8fafc;
+            --light-card: #ffffff;
+            --text-dark: #0f172a;
+            --text-light: #f1f5f9;
+            --border-light: #e2e8f0;
+            --border-dark: #334155;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, var(--dark-bg) 0%, #0c1426 100%);
-            color: var(--text-light);
-            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: all 0.3s ease;
             overflow-x: hidden;
+        }
+
+        /* Light Theme */
+        body.light {
+            background: linear-gradient(135deg, var(--light-bg) 0%, #e0f2fe 100%);
+            color: var(--text-dark);
+        }
+
+        /* Dark Theme */
+        body.dark {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #0c1929 100%);
+            color: var(--text-light);
         }
 
         /* Header */
         .header {
-            background: rgba(30, 41, 59, 0.8);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-light);
             padding: 1rem 2rem;
             position: fixed;
             top: 0;
-            width: 100%;
+            left: 0;
+            right: 0;
             z-index: 1000;
-        }
-
-        .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
+        }
+
+        body.dark .header {
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom-color: var(--border-dark);
         }
 
         .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--light-blue);
+            font-weight: bold;
+            color: var(--primary-blue);
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--primary-blue);
+            color: var(--primary-blue);
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary-blue);
+            color: white;
         }
 
         .menu-toggle {
-            background: var(--secondary-blue);
+            background: var(--primary-blue);
             border: none;
             color: white;
             padding: 0.75rem;
@@ -74,79 +108,72 @@
         }
 
         .menu-toggle:hover {
-            background: var(--hover-bg);
-            transform: scale(1.05);
+            background: var(--secondary-blue);
+            transform: translateY(-2px);
         }
 
-        /* Sidebar */
+        /* Sidebar Navigation */
         .sidebar {
             position: fixed;
             top: 0;
             left: -300px;
             width: 300px;
             height: 100vh;
-            background: linear-gradient(180deg, var(--card-bg) 0%, var(--dark-bg) 100%);
-            border-right: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid var(--border-light);
             transition: left 0.3s ease;
             z-index: 1001;
             padding: 2rem;
         }
 
-        .sidebar.active {
+        body.dark .sidebar {
+            background: rgba(15, 23, 42, 0.95);
+            border-right-color: var(--border-dark);
+        }
+
+        .sidebar.open {
             left: 0;
         }
 
         .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
         }
 
-        .sidebar-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--light-blue);
-            margin-bottom: 0.5rem;
+        .close-sidebar {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary-blue);
         }
 
-        .sidebar-links {
+        .nav-links {
             list-style: none;
         }
 
-        .sidebar-links li {
+        .nav-links li {
             margin-bottom: 1rem;
         }
 
-        .sidebar-links a {
+        .nav-links a {
             display: flex;
             align-items: center;
-            color: var(--text-gray);
+            gap: 0.75rem;
             text-decoration: none;
-            padding: 0.75rem;
+            color: inherit;
+            padding: 0.75rem 1rem;
             border-radius: 8px;
             transition: all 0.3s ease;
         }
 
-        .sidebar-links a:hover {
-            background: var(--secondary-blue);
+        .nav-links a:hover {
+            background: var(--primary-blue);
             color: white;
             transform: translateX(5px);
-        }
-
-        .sidebar-links i {
-            margin-right: 0.75rem;
-            width: 20px;
-        }
-
-        .close-sidebar {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            color: var(--text-gray);
-            font-size: 1.5rem;
-            cursor: pointer;
         }
 
         /* Overlay */
@@ -154,8 +181,8 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            right: 0;
+            bottom: 0;
             background: rgba(0, 0, 0, 0.5);
             opacity: 0;
             visibility: hidden;
@@ -169,47 +196,56 @@
         }
 
         /* Main Content */
-        .main-content {
+        .main {
             margin-top: 80px;
             padding: 2rem;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
+            min-height: calc(100vh - 80px);
         }
 
-        .page-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, var(--light-blue), var(--secondary-blue));
-            background-clip: text;
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .page-subtitle {
-            color: var(--text-gray);
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        /* Dashboard Grid */
-        .dashboard-grid {
+        /* Code Grid */
+        .code-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
         }
 
         .code-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
+            background: var(--light-card);
+            border: 1px solid var(--border-light);
             border-radius: 12px;
             padding: 1.5rem;
             transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
             overflow: hidden;
+        }
+
+        body.dark .code-card {
+            background: var(--dark-card);
+            border-color: var(--border-dark);
         }
 
         .code-card::before {
@@ -217,94 +253,163 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
+            right: 0;
             height: 4px;
-            background: linear-gradient(90deg, var(--secondary-blue), var(--light-blue));
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
         }
 
         .code-card:hover {
             transform: translateY(-5px);
-            border-color: var(--secondary-blue);
             box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1);
         }
 
-        .code-card-title {
-            font-size: 1.25rem;
-            font-weight: 600;
+        body.dark .code-card:hover {
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
+        }
+
+        .code-title {
+            font-size: 1.3rem;
+            font-weight: bold;
             margin-bottom: 0.5rem;
-            color: var(--light-blue);
+            color: var(--primary-blue);
         }
 
-        .code-card-type {
-            background: var(--secondary-blue);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            display: inline-block;
+        .code-description {
+            opacity: 0.7;
             margin-bottom: 1rem;
-        }
-
-        .code-card-description {
-            color: var(--text-gray);
-            font-size: 0.9rem;
             line-height: 1.5;
         }
 
-        /* Code Viewer Modal */
+        .code-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            opacity: 0.6;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            padding: 3rem;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border-light);
+            border-top: 3px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        body.dark .spinner {
+            border-color: var(--border-dark);
+            border-top-color: var(--primary-blue);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Modal */
         .modal {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            right: 0;
+            bottom: 0;
             background: rgba(0, 0, 0, 0.8);
             display: none;
-            justify-content: center;
-            align-items: center;
             z-index: 2000;
-            padding: 2rem;
+            overflow-y: auto;
         }
 
         .modal.active {
             display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
         }
 
         .modal-content {
-            background: var(--card-bg);
-            border-radius: 12px;
-            width: 100%;
+            background: var(--light-card);
+            border-radius: 16px;
+            width: 90%;
             max-width: 900px;
-            max-height: 80vh;
+            max-height: 90vh;
             overflow: hidden;
             position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        body.dark .modal-content {
+            background: var(--dark-card);
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .modal-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-light);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--light-blue);
+        body.dark .modal-header {
+            border-bottom-color: var(--border-dark);
         }
 
-        .modal-actions {
+        .modal-header h2 {
+            color: var(--primary-blue);
+            font-size: 1.5rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #64748b;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: #ef4444;
+        }
+
+        .modal-body {
+            padding: 2rem;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .code-actions {
             display: flex;
-            gap: 0.75rem;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .btn {
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1.5rem;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-weight: 500;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
@@ -312,172 +417,149 @@
         }
 
         .btn-primary {
-            background: var(--secondary-blue);
+            background: var(--primary-blue);
             color: white;
         }
 
         .btn-primary:hover {
-            background: var(--hover-bg);
+            background: var(--secondary-blue);
+            transform: translateY(-2px);
         }
 
         .btn-secondary {
-            background: var(--border-color);
-            color: var(--text-light);
+            background: transparent;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
         }
 
         .btn-secondary:hover {
-            background: var(--text-gray);
+            background: var(--primary-blue);
+            color: white;
         }
 
-        .close-modal {
-            background: none;
-            border: none;
-            color: var(--text-gray);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.5rem;
-        }
-
-        .modal-body {
-            padding: 1.5rem;
-            overflow-y: auto;
-            max-height: calc(80vh - 120px);
-        }
-
-        .code-container {
-            background: #1a202c;
+        .code-display {
+            background: #2d3748;
             border-radius: 8px;
             overflow: hidden;
             margin-bottom: 1rem;
         }
 
-        .code-header {
-            background: #2d3748;
-            padding: 0.75rem 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.9rem;
-            color: var(--text-gray);
-        }
-
-        .code-content {
-            padding: 1rem;
-            overflow-x: auto;
-        }
-
-        .code-content pre {
+        .code-display pre {
             margin: 0;
-            font-size: 0.9rem;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-size: 14px;
             line-height: 1.5;
         }
 
         .preview-container {
-            border: 1px solid var(--border-color);
+            background: var(--light-card);
+            border: 1px solid var(--border-light);
             border-radius: 8px;
-            overflow: hidden;
+            padding: 1rem;
             margin-top: 1rem;
         }
 
-        .preview-header {
-            background: var(--border-color);
-            padding: 0.75rem 1rem;
-            font-size: 0.9rem;
-            color: var(--text-light);
+        body.dark .preview-container {
+            background: var(--dark-bg);
+            border-color: var(--border-dark);
         }
 
-        .preview-content {
-            background: white;
-            color: black;
-            min-height: 200px;
-            padding: 1rem;
+        /* Error State */
+        .error-state {
+            text-align: center;
+            padding: 3rem;
+            opacity: 0.7;
+        }
+
+        .error-state i {
+            font-size: 3rem;
+            color: #ef4444;
+            margin-bottom: 1rem;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .main-content {
+            .header {
                 padding: 1rem;
             }
 
-            .page-title {
+            .main {
+                padding: 1rem;
+            }
+
+            .hero h1 {
                 font-size: 2rem;
             }
 
-            .dashboard-grid {
+            .code-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .modal {
-                padding: 1rem;
+                gap: 1rem;
             }
 
             .modal-content {
-                max-height: 90vh;
+                width: 95%;
+                margin: 1rem;
+            }
+
+            .modal-body {
+                padding: 1rem;
+            }
+
+            .code-actions {
+                flex-direction: column;
             }
         }
 
-        /* Animation */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary-blue);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 3000;
         }
 
-        .code-card {
-            animation: fadeInUp 0.6s ease forwards;
-        }
-
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--border-color);
-            border-top: 4px solid var(--secondary-blue);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
         }
     </style>
 </head>
-<body>
+<body class="light">
     <!-- Header -->
     <header class="header">
-        <div class="header-content">
-            <div class="logo">
-                <i class="fas fa-code"></i> CodeSpeed
-            </div>
+        <div class="logo">
+            <i class="fas fa-code"></i>
+            <span>CodeSpeed</span>
+        </div>
+        <div class="header-controls">
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <i class="fas fa-moon"></i>
+            </button>
             <button class="menu-toggle" onclick="toggleSidebar()">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
     </header>
 
-    <!-- Sidebar -->
-    <nav class="sidebar" id="sidebar">
-        <button class="close-sidebar" onclick="toggleSidebar()">
-            <i class="fas fa-times"></i>
-        </button>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
         <div class="sidebar-header">
-            <h3 class="sidebar-title">Navigation</h3>
+            <h3><i class="fas fa-code"></i> CodeSpeed</h3>
+            <button class="close-sidebar" onclick="closeSidebar()">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-        <ul class="sidebar-links">
+        <ul class="nav-links">
             <li>
-                <a href="#" onclick="showDashboard()">
+                <a href="#" onclick="loadDashboard()">
                     <i class="fas fa-home"></i>
                     Dashboard
                 </a>
@@ -489,429 +571,395 @@
                 </a>
             </li>
             <li>
-                <a href="#" onclick="showContact()">
+                <a href="mailto:your.email@example.com">
                     <i class="fas fa-envelope"></i>
                     Contact Me
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/Xvoid22/CodeSpeed" target="_blank">
+                    <i class="fab fa-github"></i>
+                    GitHub Repository
                 </a>
             </li>
         </ul>
     </nav>
 
     <!-- Overlay -->
-    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+    <div class="overlay" onclick="closeSidebar()"></div>
 
     <!-- Main Content -->
-    <main class="main-content">
-        <h1 class="page-title">Code Repository</h1>
-        <p class="page-subtitle">Browse and explore useful code snippets from the upload folder</p>
-        
+    <main class="main">
+        <div class="hero">
+            <h1>Welcome to CodeSpeed</h1>
+            <p>Discover and share useful code snippets with the community. Browse through curated collections of helpful code.</p>
+        </div>
+
         <div id="dashboard">
             <div class="loading">
                 <div class="spinner"></div>
+                <p>Loading code files...</p>
             </div>
         </div>
     </main>
 
-    <!-- Modal -->
+    <!-- Code Modal -->
     <div class="modal" id="codeModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="modalTitle">Code Viewer</h3>
-                <div class="modal-actions">
+                <h2 id="modalTitle">Code Preview</h2>
+                <button class="close-modal" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="code-actions">
                     <button class="btn btn-primary" onclick="copyCode()">
                         <i class="fas fa-copy"></i>
-                        Copy Code
+                        Salin Code
                     </button>
                     <button class="btn btn-secondary" onclick="togglePreview()">
                         <i class="fas fa-eye"></i>
-                        <span id="previewToggleText">Preview</span>
-                    </button>
-                    <button class="close-modal" onclick="closeModal()">
-                        <i class="fas fa-times"></i>
+                        Preview
                     </button>
                 </div>
-            </div>
-            <div class="modal-body">
-                <div class="code-container">
-                    <div class="code-header">
-                        <span id="codeFileName">code.js</span>
-                        <span id="codeFileType">JavaScript</span>
-                    </div>
-                    <div class="code-content">
-                        <pre><code id="codeContent" class="language-javascript"></code></pre>
-                    </div>
+                <div class="code-display">
+                    <pre><code id="codeContent"></code></pre>
                 </div>
                 <div class="preview-container" id="previewContainer" style="display: none;">
-                    <div class="preview-header">
-                        Live Preview
-                    </div>
-                    <div class="preview-content" id="previewContent">
-                        <!-- Preview will be rendered here -->
-                    </div>
+                    <h4>Preview:</h4>
+                    <div id="previewContent"></div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
     <script>
-        // GitHub API Configuration
-        const GITHUB_TOKEN = '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';
-        const REPO_OWNER = 'Xvoid22';
-        const REPO_NAME = 'CodeSpeed';
-        const FOLDER_PATH = 'upload';
-
         let currentCode = '';
-        let isPreviewVisible = false;
+        let currentFileName = '';
 
-        // Sidebar functionality
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
+        // Theme Management
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.querySelector('.theme-toggle i');
             
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-        }
-
-        // Load files from GitHub repository
-        async function loadFilesFromGitHub() {
-            console.log('Starting to load files from GitHub...');
-            
-            try {
-                const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FOLDER_PATH}`;
-                console.log('Fetching from URL:', url);
-                
-                const response = await fetch(url, {
-                    headers: {
-                        'Authorization': `Bearer ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'X-GitHub-Api-Version': '2022-11-28'
-                    }
-                });
-
-                console.log('Response status:', response.status);
-                console.log('Response headers:', Object.fromEntries(response.headers));
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('GitHub API Error:', errorText);
-                    throw new Error(`GitHub API error! status: ${response.status} - ${errorText}`);
-                }
-
-                const files = await response.json();
-                console.log('Files received:', files);
-                
-                const filteredFiles = Array.isArray(files) ? files.filter(file => file.type === 'file') : [];
-                console.log('Filtered files:', filteredFiles);
-                
-                return filteredFiles;
-            } catch (error) {
-                console.error('Error loading files from GitHub:', error);
-                
-                // Fallback: Return mock data for testing
-                return [
-                    {
-                        name: 'love.js',
-                        download_url: `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${FOLDER_PATH}/love.js`,
-                        type: 'file'
-                    },
-                    {
-                        name: 'lov.js', 
-                        download_url: `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${FOLDER_PATH}/lov.js`,
-                        type: 'file'
-                    }
-                ];
+            if (body.classList.contains('light')) {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
             }
         }
 
-        // Get file extension and determine type
-        function getFileType(filename) {
-            const extension = filename.split('.').pop().toLowerCase();
-            const types = {
-                'js': { type: 'JavaScript', icon: 'fab fa-js-square', language: 'javascript' },
-                'html': { type: 'HTML', icon: 'fab fa-html5', language: 'html' },
-                'css': { type: 'CSS', icon: 'fab fa-css3-alt', language: 'css' },
-                'py': { type: 'Python', icon: 'fab fa-python', language: 'python' },
-                'json': { type: 'JSON', icon: 'fas fa-file-code', language: 'json' },
-                'md': { type: 'Markdown', icon: 'fab fa-markdown', language: 'markdown' }
-            };
-            return types[extension] || { type: 'Text', icon: 'fas fa-file-alt', language: 'text' };
+        // Load saved theme
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const body = document.body;
+            const themeIcon = document.querySelector('.theme-toggle i');
+            
+            body.className = savedTheme;
+            themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
         }
 
-        // Render dashboard with files
-        function renderDashboard(files) {
-            const dashboard = document.getElementById('dashboard');
+        // Sidebar Management
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.overlay');
             
-            console.log('Rendering dashboard with files:', files);
+            sidebar.classList.add('open');
+            overlay.classList.add('active');
+        }
+
+        function closeSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.overlay');
+            
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        }
+
+        // GitHub API Functions
+        async function fetchCodeFiles() {
+            try {
+                const response = await fetch('https://api.github.com/repos/Xvoid22/CodeSpeed/contents/upload');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const files = await response.json();
+                return files.filter(file => file.type === 'file');
+            } catch (error) {
+                console.error('Error fetching files:', error);
+                return [];
+            }
+        }
+
+        async function fetchFileContent(fileName) {
+            try {
+                const response = await fetch(`https://api.github.com/repos/Xvoid22/CodeSpeed/contents/upload/${fileName}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const fileData = await response.json();
+                return atob(fileData.content);
+            } catch (error) {
+                console.error('Error fetching file content:', error);
+                return '';
+            }
+        }
+
+        // Dashboard Functions
+        async function loadDashboard() {
+            const dashboard = document.getElementById('dashboard');
+            dashboard.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading code files...</p>
+                </div>
+            `;
+
+            const files = await fetchCodeFiles();
             
             if (files.length === 0) {
                 dashboard.innerHTML = `
-                    <div style="text-align: center; padding: 2rem; color: var(--text-gray);">
-                        <i class="fas fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-                        <p>No files found in the upload folder</p>
-                        <p style="font-size: 0.9rem; margin-top: 1rem;">Check console for error details</p>
-                        <button onclick="initializeDashboard()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: var(--secondary-blue); color: white; border: none; border-radius: 6px; cursor: pointer;">
-                            Retry Loading
-                        </button>
+                    <div class="error-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Tidak ada file ditemukan</h3>
+                        <p>Folder upload kosong atau terjadi error saat mengambil data.</p>
                     </div>
                 `;
                 return;
             }
 
-            const grid = document.createElement('div');
-            grid.className = 'dashboard-grid';
-
-            files.forEach((file, index) => {
-                const fileInfo = getFileType(file.name);
-                const card = document.createElement('div');
-                card.className = 'code-card';
-                card.style.animationDelay = `${index * 0.1}s`;
+            let gridHTML = '<div class="code-grid">';
+            
+            files.forEach(file => {
+                const fileName = file.name;
+                const fileExt = fileName.split('.').pop().toLowerCase();
+                const displayName = fileName.replace(/\.[^/.]+$/, ""); // Remove extension
                 
-                card.innerHTML = `
-                    <div class="code-card-title">
-                        <i class="${fileInfo.icon}"></i>
-                        ${file.name}
-                    </div>
-                    <div class="code-card-type">${fileInfo.type}</div>
-                    <div class="code-card-description">
-                        Click to view and copy the code
+                let icon = 'fas fa-file-code';
+                let language = 'text';
+                
+                // Set icon and language based on file extension
+                switch(fileExt) {
+                    case 'js':
+                        icon = 'fab fa-js-square';
+                        language = 'JavaScript';
+                        break;
+                    case 'html':
+                        icon = 'fab fa-html5';
+                        language = 'HTML';
+                        break;
+                    case 'css':
+                        icon = 'fab fa-css3-alt';
+                        language = 'CSS';
+                        break;
+                    case 'py':
+                        icon = 'fab fa-python';
+                        language = 'Python';
+                        break;
+                    case 'json':
+                        icon = 'fas fa-brackets-curly';
+                        language = 'JSON';
+                        break;
+                    default:
+                        language = fileExt.toUpperCase();
+                }
+
+                gridHTML += `
+                    <div class="code-card" onclick="openCodeModal('${fileName}')">
+                        <h3 class="code-title">
+                            <i class="${icon}"></i>
+                            ${displayName}
+                        </h3>
+                        <p class="code-description">
+                            File berbagi code berguna untuk komunitas developer.
+                        </p>
+                        <div class="code-meta">
+                            <span><i class="fas fa-code"></i> ${language}</span>
+                            <span><i class="fas fa-download"></i> ${file.size} bytes</span>
+                        </div>
                     </div>
                 `;
-
-                card.addEventListener('click', () => openCodeModal(file));
-                grid.appendChild(card);
             });
-
-            dashboard.innerHTML = '';
-            dashboard.appendChild(grid);
-        }
-
-        // Fetch file content from GitHub
-        async function getFileContent(file) {
-            console.log('Fetching content for file:', file.name);
             
-            try {
-                // Try the download_url first
-                let url = file.download_url;
-                
-                // If no download_url, construct raw GitHub URL
-                if (!url) {
-                    url = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${FOLDER_PATH}/${file.name}`;
-                }
-                
-                console.log('Fetching from URL:', url);
-                
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const content = await response.text();
-                console.log('Content loaded successfully, length:', content.length);
-                return content;
-            } catch (error) {
-                console.error('Error fetching file content:', error);
-                return `// Error loading file content: ${error.message}\n// Please check if the file exists in the repository`;
-            }
+            gridHTML += '</div>';
+            dashboard.innerHTML = gridHTML;
+            closeSidebar();
         }
 
-        // Open code modal
-        async function openCodeModal(file) {
+        // Modal Functions
+        async function openCodeModal(fileName) {
             const modal = document.getElementById('codeModal');
             const modalTitle = document.getElementById('modalTitle');
-            const codeFileName = document.getElementById('codeFileName');
-            const codeFileType = document.getElementById('codeFileType');
             const codeContent = document.getElementById('codeContent');
             const previewContainer = document.getElementById('previewContainer');
             
-            const fileInfo = getFileType(file.name);
-            
-            modalTitle.textContent = file.name;
-            codeFileName.textContent = file.name;
-            codeFileType.textContent = fileInfo.type;
-            
-            // Show loading
-            codeContent.textContent = 'Loading...';
+            currentFileName = fileName;
+            modalTitle.textContent = fileName;
             
             modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            codeContent.textContent = 'Loading...';
             
-            // Fetch and display content
-            currentCode = await getFileContent(file);
-            codeContent.textContent = currentCode;
-            codeContent.className = `language-${fileInfo.language}`;
+            const content = await fetchFileContent(fileName);
+            currentCode = content;
+            codeContent.textContent = content;
             
             // Apply syntax highlighting
+            const fileExt = fileName.split('.').pop().toLowerCase();
+            let language = 'javascript';
+            
+            switch(fileExt) {
+                case 'html': language = 'html'; break;
+                case 'css': language = 'css'; break;
+                case 'py': language = 'python'; break;
+                case 'json': language = 'json'; break;
+                case 'md': language = 'markdown'; break;
+            }
+            
+            codeContent.className = `language-${language}`;
             Prism.highlightElement(codeContent);
             
-            // Hide preview initially
+            // Hide preview by default
             previewContainer.style.display = 'none';
-            isPreviewVisible = false;
-            document.getElementById('previewToggleText').textContent = 'Preview';
         }
 
-        // Close modal
         function closeModal() {
             const modal = document.getElementById('codeModal');
             modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
         }
 
-        // Copy code to clipboard
+        // Copy Code Function
         async function copyCode() {
             try {
                 await navigator.clipboard.writeText(currentCode);
-                
-                // Show success feedback
-                const btn = event.target.closest('.btn');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                btn.style.background = '#10b981';
-                
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.style.background = '';
-                }, 2000);
+                showToast('Code berhasil disalin ke clipboard!');
             } catch (err) {
-                console.error('Failed to copy code:', err);
-                alert('Failed to copy code to clipboard');
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = currentCode;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showToast('Code berhasil disalin ke clipboard!');
             }
         }
 
-        // Toggle preview
+        // Preview Function
         function togglePreview() {
             const previewContainer = document.getElementById('previewContainer');
             const previewContent = document.getElementById('previewContent');
-            const toggleText = document.getElementById('previewToggleText');
+            const btn = event.target.closest('.btn-secondary');
             
-            if (isPreviewVisible) {
-                previewContainer.style.display = 'none';
-                isPreviewVisible = false;
-                toggleText.textContent = 'Preview';
-            } else {
-                // Generate preview based on file type
-                const fileName = document.getElementById('codeFileName').textContent;
-                const fileInfo = getFileType(fileName);
+            if (previewContainer.style.display === 'none') {
+                previewContainer.style.display = 'block';
+                btn.innerHTML = '<i class="fas fa-eye-slash"></i> Hide Preview';
                 
-                if (fileInfo.language === 'html') {
+                // Generate preview based on file type
+                const fileExt = currentFileName.split('.').pop().toLowerCase();
+                
+                if (fileExt === 'html') {
                     previewContent.innerHTML = currentCode;
-                } else if (fileInfo.language === 'css') {
+                } else if (fileExt === 'css') {
                     previewContent.innerHTML = `
-                        <style>${currentCode}</style>
-                        <div style="padding: 1rem;">
-                            <p>CSS preview - styles are applied to this container</p>
-                            <div class="demo-element">Sample element</div>
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px;">
+                            <p><strong>CSS Preview:</strong></p>
+                            <style>${currentCode}</style>
+                            <div style="padding: 1rem; border: 1px solid #dee2e6;">
+                                Sample content dengan styling yang diterapkan
+                            </div>
                         </div>
                     `;
-                } else if (fileInfo.language === 'javascript') {
+                } else if (fileExt === 'js') {
                     previewContent.innerHTML = `
-                        <div style="padding: 1rem;">
-                            <p>JavaScript code - check browser console for output</p>
-                            <button onclick="runJSCode()" style="padding: 0.5rem 1rem; margin-top: 1rem; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px;">
+                            <p><strong>JavaScript Preview:</strong></p>
+                            <p>Klik tombol di bawah untuk menjalankan code JavaScript:</p>
+                            <button onclick="runJavaScript()" style="background: var(--primary-blue); color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">
                                 Run Code
                             </button>
-                            <div id="jsOutput" style="margin-top: 1rem; padding: 1rem; background: #f3f4f6; color: black; border-radius: 4px; min-height: 50px;"></div>
+                            <div id="jsOutput" style="margin-top: 1rem; padding: 1rem; background: #ffffff; border: 1px solid #dee2e6; border-radius: 4px; min-height: 50px;"></div>
                         </div>
                     `;
                 } else {
                     previewContent.innerHTML = `
-                        <div style="padding: 1rem;">
-                            <p>Preview not available for this file type</p>
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px;">
+                            <p><strong>Preview tidak tersedia untuk file ${fileExt.toUpperCase()}</strong></p>
+                            <p>File ini berisi ${currentCode.split('\n').length} baris code.</p>
                         </div>
                     `;
                 }
-                
-                previewContainer.style.display = 'block';
-                isPreviewVisible = true;
-                toggleText.textContent = 'Hide Preview';
+            } else {
+                previewContainer.style.display = 'none';
+                btn.innerHTML = '<i class="fas fa-eye"></i> Preview';
             }
         }
 
-        // Run JavaScript code (for preview)
-        function runJSCode() {
+        function runJavaScript() {
             const output = document.getElementById('jsOutput');
-            output.innerHTML = '';
-            
-            // Capture console output
-            const originalLog = console.log;
-            const logs = [];
-            
-            console.log = function(...args) {
-                logs.push(args.join(' '));
-                originalLog.apply(console, arguments);
-            };
-            
             try {
+                // Create a safe environment to run the code
+                const originalConsoleLog = console.log;
+                let capturedOutput = [];
+                
+                console.log = function(...args) {
+                    capturedOutput.push(args.join(' '));
+                    originalConsoleLog.apply(console, args);
+                };
+                
                 eval(currentCode);
-                output.innerHTML = logs.length > 0 ? logs.join('<br>') : 'Code executed successfully (no console output)';
+                
+                console.log = originalConsoleLog;
+                
+                if (capturedOutput.length > 0) {
+                    output.innerHTML = capturedOutput.map(line => `<div>${line}</div>`).join('');
+                } else {
+                    output.innerHTML = '<div style="color: #28a745;">Code berhasil dijalankan! (Tidak ada output console)</div>';
+                }
             } catch (error) {
-                output.innerHTML = `<span style="color: red;">Error: ${error.message}</span>`;
-            } finally {
-                console.log = originalLog;
+                output.innerHTML = `<div style="color: #dc3545;">Error: ${error.message}</div>`;
             }
         }
 
-        // Show dashboard
-        function showDashboard() {
-            toggleSidebar();
-            // Reload dashboard if needed
-            initializeDashboard();
+        // Toast Function
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
         }
 
-        // Show contact info
-        function showContact() {
-            toggleSidebar();
-            alert('Contact: your-email@example.com\nTelegram: @yourusername');
-        }
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+            loadDashboard();
+        });
 
-        // Initialize dashboard
-        async function initializeDashboard() {
-            console.log('Initializing dashboard...');
-            const dashboard = document.getElementById('dashboard');
-            
-            // Show loading
-            dashboard.innerHTML = `
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <p style="margin-top: 1rem; color: var(--text-gray);">Loading files from repository...</p>
-                </div>
-            `;
-            
-            try {
-                const files = await loadFilesFromGitHub();
-                console.log('Files loaded:', files);
-                renderDashboard(files);
-            } catch (error) {
-                console.error('Failed to initialize dashboard:', error);
-                dashboard.innerHTML = `
-                    <div style="text-align: center; padding: 2rem; color: var(--text-gray);">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem; color: #f59e0b;"></i>
-                        <p>Failed to load files from repository</p>
-                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">Error: ${error.message}</p>
-                        <button onclick="initializeDashboard()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: var(--secondary-blue); color: white; border: none; border-radius: 6px; cursor: pointer;">
-                            Try Again
-                        </button>
-                    </div>
-                `;
+        // Close modal on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+                closeSidebar();
             }
-        }
+        });
 
         // Close modal when clicking outside
         document.getElementById('codeModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeModal();
             }
-        });
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
-        });
-
-        // Initialize app
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeDashboard();
         });
     </script>
 </body>
