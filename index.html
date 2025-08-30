@@ -316,92 +316,95 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Modal */
-        .modal {
+        /* Fullscreen Code View */
+        .fullscreen-view {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: var(--light-bg);
             display: none;
             z-index: 2000;
             overflow-y: auto;
         }
 
-        .modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
+        body.dark .fullscreen-view {
+            background: var(--dark-bg);
         }
 
-        .modal-content {
-            background: var(--light-card);
-            border-radius: 16px;
-            width: 90%;
-            max-width: 900px;
-            max-height: 90vh;
-            overflow: hidden;
-            position: relative;
-            animation: modalSlideIn 0.3s ease;
+        .fullscreen-view.active {
+            display: block;
+            animation: slideInFromRight 0.3s ease;
         }
 
-        body.dark .modal-content {
-            background: var(--dark-card);
-        }
-
-        @keyframes modalSlideIn {
+        @keyframes slideInFromRight {
             from {
                 opacity: 0;
-                transform: translateY(-50px) scale(0.95);
+                transform: translateX(100px);
             }
             to {
                 opacity: 1;
-                transform: translateY(0) scale(1);
+                transform: translateX(0);
             }
         }
 
-        .modal-header {
-            padding: 1.5rem 2rem;
+        .fullscreen-header {
+            background: var(--light-card);
             border-bottom: 1px solid var(--border-light);
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        body.dark .modal-header {
+        body.dark .fullscreen-header {
+            background: var(--dark-card);
             border-bottom-color: var(--border-dark);
         }
 
-        .modal-header h2 {
+        .fullscreen-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
             color: var(--primary-blue);
-            font-size: 1.5rem;
+            font-size: 1.3rem;
+            font-weight: bold;
         }
 
-        .close-modal {
-            background: none;
+        .back-btn {
+            background: var(--primary-blue);
+            color: white;
             border: none;
-            font-size: 1.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
             cursor: pointer;
-            color: #64748b;
-            transition: color 0.3s ease;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .close-modal:hover {
-            color: #ef4444;
+        .back-btn:hover {
+            background: var(--secondary-blue);
+            transform: translateY(-2px);
         }
 
-        .modal-body {
+        .fullscreen-body {
             padding: 2rem;
-            max-height: 70vh;
-            overflow-y: auto;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        .code-actions {
+        .fullscreen-actions {
             display: flex;
             gap: 1rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -437,32 +440,64 @@
             color: white;
         }
 
-        .code-display {
+        .fullscreen-code {
             background: #2d3748;
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
-            margin-bottom: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
-        .code-display pre {
+        .code-header {
+            background: #1a202c;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #4a5568;
+        }
+
+        .code-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #e2e8f0;
+        }
+
+        .line-numbers {
+            color: #718096;
+            font-size: 0.875rem;
+        }
+
+        .fullscreen-code pre {
             margin: 0;
-            padding: 1.5rem;
+            padding: 2rem;
             overflow-x: auto;
-            font-size: 14px;
-            line-height: 1.5;
+            font-size: 15px;
+            line-height: 1.6;
+            min-height: 400px;
         }
 
-        .preview-container {
+        .preview-section {
             background: var(--light-card);
-            border: 1px solid var(--border-light);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-top: 1rem;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
         }
 
-        body.dark .preview-container {
-            background: var(--dark-bg);
+        body.dark .preview-section {
+            background: var(--dark-card);
             border-color: var(--border-dark);
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-blue);
+            font-weight: bold;
+            font-size: 1.1rem;
         }
 
         /* Error State */
@@ -603,33 +638,51 @@
         </div>
     </main>
 
-    <!-- Code Modal -->
-    <div class="modal" id="codeModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle">Code Preview</h2>
-                <button class="close-modal" onclick="closeModal()">
-                    <i class="fas fa-times"></i>
+    <!-- Fullscreen Code View -->
+    <div class="fullscreen-view" id="fullscreenView">
+        <div class="fullscreen-header">
+            <div class="fullscreen-title">
+                <i class="fas fa-code"></i>
+                <span id="fullscreenTitle">Code Preview</span>
+            </div>
+            <button class="back-btn" onclick="closeFullscreen()">
+                <i class="fas fa-arrow-left"></i>
+                Kembali ke Dashboard
+            </button>
+        </div>
+        <div class="fullscreen-body">
+            <div class="fullscreen-actions">
+                <button class="btn btn-primary" onclick="copyCode()">
+                    <i class="fas fa-copy"></i>
+                    Salin Code
+                </button>
+                <button class="btn btn-secondary" onclick="toggleFullscreenPreview()">
+                    <i class="fas fa-eye"></i>
+                    Tampilkan Preview
+                </button>
+                <button class="btn btn-secondary" onclick="downloadCode()">
+                    <i class="fas fa-download"></i>
+                    Download File
                 </button>
             </div>
-            <div class="modal-body">
-                <div class="code-actions">
-                    <button class="btn btn-primary" onclick="copyCode()">
-                        <i class="fas fa-copy"></i>
-                        Salin Code
-                    </button>
-                    <button class="btn btn-secondary" onclick="togglePreview()">
-                        <i class="fas fa-eye"></i>
-                        Preview
-                    </button>
+            
+            <div class="fullscreen-code">
+                <div class="code-header">
+                    <div class="code-info">
+                        <span id="fileIcon"><i class="fas fa-file-code"></i></span>
+                        <span id="fileName">filename.js</span>
+                        <span class="line-numbers" id="lineCount">0 lines</span>
+                    </div>
                 </div>
-                <div class="code-display">
-                    <pre><code id="codeContent"></code></pre>
+                <pre><code id="fullscreenCodeContent"></code></pre>
+            </div>
+            
+            <div class="preview-section" id="fullscreenPreview" style="display: none;">
+                <div class="preview-header">
+                    <i class="fas fa-play-circle"></i>
+                    <span>Live Preview</span>
                 </div>
-                <div class="preview-container" id="previewContainer" style="display: none;">
-                    <h4>Preview:</h4>
-                    <div id="previewContent"></div>
-                </div>
+                <div id="fullscreenPreviewContent"></div>
             </div>
         </div>
     </div>
@@ -775,7 +828,7 @@
                 }
 
                 gridHTML += `
-                    <div class="code-card" onclick="openCodeModal('${fileName}')">
+                    <div class="code-card" onclick="openFullscreenCode('${fileName}')">
                         <h3 class="code-title">
                             <i class="${icon}"></i>
                             ${displayName}
@@ -796,45 +849,182 @@
             closeSidebar();
         }
 
-        // Modal Functions
-        async function openCodeModal(fileName) {
-            const modal = document.getElementById('codeModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const codeContent = document.getElementById('codeContent');
-            const previewContainer = document.getElementById('previewContainer');
+        // Fullscreen Code Functions
+        async function openFullscreenCode(fileName) {
+            const fullscreenView = document.getElementById('fullscreenView');
+            const fullscreenTitle = document.getElementById('fullscreenTitle');
+            const fullscreenCodeContent = document.getElementById('fullscreenCodeContent');
+            const fileNameSpan = document.getElementById('fileName');
+            const fileIcon = document.getElementById('fileIcon');
+            const lineCount = document.getElementById('lineCount');
+            const fullscreenPreview = document.getElementById('fullscreenPreview');
             
             currentFileName = fileName;
-            modalTitle.textContent = fileName;
+            fullscreenTitle.textContent = fileName;
+            fileNameSpan.textContent = fileName;
             
-            modal.classList.add('active');
-            codeContent.textContent = 'Loading...';
+            fullscreenView.classList.add('active');
+            fullscreenCodeContent.textContent = 'Loading...';
             
             const content = await fetchFileContent(fileName);
             currentCode = content;
-            codeContent.textContent = content;
+            fullscreenCodeContent.textContent = content;
             
-            // Apply syntax highlighting
+            // Count lines
+            const lines = content.split('\n').length;
+            lineCount.textContent = `${lines} lines`;
+            
+            // Set file icon
             const fileExt = fileName.split('.').pop().toLowerCase();
+            let icon = 'fas fa-file-code';
             let language = 'javascript';
             
             switch(fileExt) {
-                case 'html': language = 'html'; break;
-                case 'css': language = 'css'; break;
-                case 'py': language = 'python'; break;
-                case 'json': language = 'json'; break;
-                case 'md': language = 'markdown'; break;
+                case 'js':
+                    icon = 'fab fa-js-square';
+                    language = 'javascript';
+                    break;
+                case 'html':
+                    icon = 'fab fa-html5';
+                    language = 'html';
+                    break;
+                case 'css':
+                    icon = 'fab fa-css3-alt';
+                    language = 'css';
+                    break;
+                case 'py':
+                    icon = 'fab fa-python';
+                    language = 'python';
+                    break;
+                case 'json':
+                    icon = 'fas fa-brackets-curly';
+                    language = 'json';
+                    break;
+                case 'md':
+                    icon = 'fab fa-markdown';
+                    language = 'markdown';
+                    break;
             }
             
-            codeContent.className = `language-${language}`;
-            Prism.highlightElement(codeContent);
+            fileIcon.innerHTML = `<i class="${icon}"></i>`;
+            fullscreenCodeContent.className = `language-${language}`;
+            Prism.highlightElement(fullscreenCodeContent);
             
             // Hide preview by default
-            previewContainer.style.display = 'none';
+            fullscreenPreview.style.display = 'none';
+            
+            // Hide main content
+            document.querySelector('.main').style.display = 'none';
+            document.querySelector('.header').style.display = 'none';
         }
 
-        function closeModal() {
-            const modal = document.getElementById('codeModal');
-            modal.classList.remove('active');
+        function closeFullscreen() {
+            const fullscreenView = document.getElementById('fullscreenView');
+            fullscreenView.classList.remove('active');
+            
+            // Show main content
+            document.querySelector('.main').style.display = 'block';
+            document.querySelector('.header').style.display = 'flex';
+        }
+
+        // Download Code Function
+        function downloadCode() {
+            const blob = new Blob([currentCode], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = currentFileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            showToast(`File ${currentFileName} berhasil didownload!`);
+        }
+
+        // Preview Function for Fullscreen
+        function toggleFullscreenPreview() {
+            const fullscreenPreview = document.getElementById('fullscreenPreview');
+            const fullscreenPreviewContent = document.getElementById('fullscreenPreviewContent');
+            const btn = event.target.closest('.btn-secondary');
+            
+            if (fullscreenPreview.style.display === 'none') {
+                fullscreenPreview.style.display = 'block';
+                btn.innerHTML = '<i class="fas fa-eye-slash"></i> Sembunyikan Preview';
+                
+                // Generate preview based on file type
+                const fileExt = currentFileName.split('.').pop().toLowerCase();
+                
+                if (fileExt === 'html') {
+                    fullscreenPreviewContent.innerHTML = `
+                        <iframe srcdoc="${currentCode.replace(/"/g, '&quot;')}" 
+                                style="width: 100%; min-height: 400px; border: 1px solid var(--border-light); border-radius: 8px;">
+                        </iframe>
+                    `;
+                } else if (fileExt === 'css') {
+                    fullscreenPreviewContent.innerHTML = `
+                        <div style="background: #f8f9fa; padding: 2rem; border-radius: 8px;">
+                            <h4 style="margin-bottom: 1rem; color: var(--primary-blue);">CSS Styling Preview</h4>
+                            <style>${currentCode}</style>
+                            <div style="padding: 2rem; border: 1px solid #dee2e6; border-radius: 8px; background: white;">
+                                <h3>Sample Heading</h3>
+                                <p>Ini adalah contoh paragraf untuk melihat efek dari CSS yang Anda tulis.</p>
+                                <button>Sample Button</button>
+                                <div class="sample-div" style="margin-top: 1rem; padding: 1rem; background: #e3f2fd;">
+                                    Sample div dengan class "sample-div"
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (fileExt === 'js') {
+                    fullscreenPreviewContent.innerHTML = `
+                        <div style="background: #f8f9fa; padding: 2rem; border-radius: 8px;">
+                            <h4 style="margin-bottom: 1rem; color: var(--primary-blue);">JavaScript Code Analysis</h4>
+                            <div style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #dee2e6;">
+                                <p><strong>File:</strong> ${currentFileName}</p>
+                                <p><strong>Lines:</strong> ${currentCode.split('\n').length}</p>
+                                <p><strong>Characters:</strong> ${currentCode.length}</p>
+                                <p><strong>Functions:</strong> ${(currentCode.match(/function\s+\w+/g) || []).length}</p>
+                                <p><strong>Variables:</strong> ${(currentCode.match(/(let|const|var)\s+\w+/g) || []).length}</p>
+                            </div>
+                            <div style="margin-top: 1rem; padding: 1rem; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeaa7;">
+                                <p><strong>Note:</strong> Untuk keamanan, JavaScript code tidak dijalankan secara otomatis. Anda dapat menyalin code dan menjalankannya di environment yang sesuai.</p>
+                            </div>
+                        </div>
+                    `;
+                } else if (fileExt === 'json') {
+                    try {
+                        const jsonData = JSON.parse(currentCode);
+                        fullscreenPreviewContent.innerHTML = `
+                            <div style="background: #f8f9fa; padding: 2rem; border-radius: 8px;">
+                                <h4 style="margin-bottom: 1rem; color: var(--primary-blue);">JSON Structure</h4>
+                                <pre style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #dee2e6; overflow-x: auto;">${JSON.stringify(jsonData, null, 2)}</pre>
+                            </div>
+                        `;
+                    } catch (e) {
+                        fullscreenPreviewContent.innerHTML = `
+                            <div style="background: #f8d7da; padding: 2rem; border-radius: 8px; border: 1px solid #f5c6cb;">
+                                <h4 style="margin-bottom: 1rem; color: #721c24;">Invalid JSON</h4>
+                                <p>JSON tidak valid: ${e.message}</p>
+                            </div>
+                        `;
+                    }
+                } else {
+                    fullscreenPreviewContent.innerHTML = `
+                        <div style="background: #f8f9fa; padding: 2rem; border-radius: 8px;">
+                            <h4 style="margin-bottom: 1rem; color: var(--primary-blue);">File Information</h4>
+                            <div style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #dee2e6;">
+                                <p><strong>File Type:</strong> ${fileExt.toUpperCase()}</p>
+                                <p><strong>Size:</strong> ${currentCode.length} characters</p>
+                                <p><strong>Lines:</strong> ${currentCode.split('\n').length}</p>
+                                <p><strong>Preview:</strong> Tidak tersedia untuk file ${fileExt.toUpperCase()}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            } else {
+                fullscreenPreview.style.display = 'none';
+                btn.innerHTML = '<i class="fas fa-eye"></i> Tampilkan Preview';
+            }
         }
 
         // Copy Code Function
@@ -852,15 +1042,75 @@
                 document.body.removeChild(textArea);
                 showToast('Code berhasil disalin ke clipboard!');
             }
+        } 'none') {
+                previewContainer.style.display = 'block';
+                btn.innerHTML = '<i class="fas fa-eye-slash"></i> Hide Preview';
+                
+                // Generate preview based on file type
+                const fileExt = currentFileName.split('.').pop().toLowerCase();
+                
+                if (fileExt === 'html') {
+                    previewContent.innerHTML = currentCode;
+                } else if (fileExt === 'css') {
+                    previewContent.innerHTML = `
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px;">
+                            <p><strong>CSS Preview:</strong></p>
+                            <style>${currentCode}</style>
+                            <div style="padding: 1rem; border: 1px solid #dee2e6;">
+                                Sample content dengan styling yang diterapkan
+                            </div>
+                        </div>
+                    `;
+                } else if (fileExt === 'js') {
+                    previewContent.innerHTML = `
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px;">
+                            <p><strong>JavaScript Preview:</strong></p>
+                            <p>Klik tombol di bawah untuk menjalankan code JavaScript:</p>
+                            <button onclick="runJavaScript()" style="background: var(--primary-blue); color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">
+                                Run Code
+                            </button>
+                            <div id="jsOutput" style="margin-top: 1rem; padding: 1rem; background: #ffffff; border: 1px solid #dee2e6; border-radius: 4px; min-height: 50px;"></div>
+                        </div>
+                    `;
+                } else {
+                    previewContent.innerHTML = `
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px;">
+                            <p><strong>Preview tidak tersedia untuk file ${fileExt.toUpperCase()}</strong></p>
+                            <p>File ini berisi ${currentCode.split('\n').length} baris code.</p>
+                        </div>
+                    `;
+                }
+            } else {
+                previewContainer.style.display = 'none';
+                btn.innerHTML = '<i class="fas fa-eye"></i> Preview';
+            }
         }
 
-        // Preview Function
-        function togglePreview() {
-            const previewContainer = document.getElementById('previewContainer');
-            const previewContent = document.getElementById('previewContent');
-            const btn = event.target.closest('.btn-secondary');
-            
-            if (previewContainer.style.display === 'none') {
+        function runJavaScript() {
+            const output = document.getElementById('jsOutput');
+            try {
+                // Create a safe environment to run the code
+                const originalConsoleLog = console.log;
+                let capturedOutput = [];
+                
+                console.log = function(...args) {
+                    capturedOutput.push(args.join(' '));
+                    originalConsoleLog.apply(console, args);
+                };
+                
+                eval(currentCode);
+                
+                console.log = originalConsoleLog;
+                
+                if (capturedOutput.length > 0) {
+                    output.innerHTML = capturedOutput.map(line => `<div>${line}</div>`).join('');
+                } else {
+                    output.innerHTML = '<div style="color: #28a745;">Code berhasil dijalankan! (Tidak ada output console)</div>';
+                }
+            } catch (error) {
+                output.innerHTML = `<div style="color: #dc3545;">Error: ${error.message}</div>`;
+            }
+        } 'none') {
                 previewContainer.style.display = 'block';
                 btn.innerHTML = '<i class="fas fa-eye-slash"></i> Hide Preview';
                 
@@ -947,18 +1197,11 @@
             loadDashboard();
         });
 
-        // Close modal on escape key
+        // Close fullscreen on escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                closeModal();
+                closeFullscreen();
                 closeSidebar();
-            }
-        });
-
-        // Close modal when clicking outside
-        document.getElementById('codeModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
             }
         });
     </script>
