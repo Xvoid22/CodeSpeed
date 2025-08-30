@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeSpeed - Code Sharing Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-dark.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-html.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #1e40af;
+            --secondary-blue: #3b82f6;
+            --light-blue: #60a5fa;
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-light: #f8fafc;
+            --text-gray: #94a3b8;
+            --border-color: #334155;
+            --hover-bg: #2563eb;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #0c1426 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--light-blue);
+        }
+
+        .menu-toggle {
+            background: var(--secondary-blue);
+            border: none;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background: var(--hover-bg);
+            transform: scale(1.05);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100vh;
+            background: linear-gradient(180deg, var(--card-bg) 0%, var(--dark-bg) 100%);
+            border-right: 1px solid var(--border-color);
+            transition: left 0.3s ease;
+            z-index: 1001;
+            padding: 2rem;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--light-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-links {
+            list-style: none;
+        }
+
+        .sidebar-links li {
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-links a {
+            display: flex;
+            align-items: center;
+            color: var(--text-gray);
+            text-decoration: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-links a:hover {
+            background: var(--secondary-blue);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .sidebar-links i {
+            margin-right: 0.75rem;
+            width: 20px;
+        }
+
+        .close-sidebar {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-gray);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--light-blue), var(--secondary-blue));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-subtitle {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .code-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .code-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary-blue), var(--light-blue));
+        }
+
+        .code-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--secondary-blue);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1);
+        }
+
+        .code-card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--light-blue);
+        }
+
+        .code-card-type {
+            background: var(--secondary-blue);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .code-card-description {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Code Viewer Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 900px;
+            max-height: 80vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--light-blue);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--secondary-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--hover-bg);
+        }
+
+        .btn-secondary {
+            background: var(--border-color);
+            color: var(--text-light);
+        }
+
+        .btn-secondary:hover {
+            background: var(--text-gray);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-gray);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            max-height: calc(80vh - 120px);
+        }
+
+        .code-container {
+            background: #1a202c;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .code-header {
+            background: #2d3748;
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--text-gray);
+        }
+
+        .code-content {
+            padding: 1rem;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .preview-container {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .preview-header {
+            background: var(--border-color);
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .preview-content {
+            background: white;
+            color: black;
+            min-height: 200px;
+            padding: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal {
+                padding: 1rem;
+            }
+
+            .modal-content {
+                max-height: 90vh;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .code-card {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--secondary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-code"></i> CodeSpeed
+            </div>
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <button class="close-sidebar" onclick="toggleSidebar()">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="sidebar-header">
+            <h3 class="sidebar-title">Navigation</h3>
+        </div>
+        <ul class="sidebar-links">
+            <li>
+                <a href="#" onclick="showDashboard()">
+                    <i class="fas fa-home"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="https://t.me/your_channel" target="_blank">
+                    <i class="fab fa-telegram"></i>
+                    Telegram Channel
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="showContact()">
+                    <i class="fas fa-envelope"></i>
+                    Contact Me
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <h1 class="page-title">Code Repository</h1>
+        <p class="page-subtitle">Browse and explore useful code snippets from the upload folder</p>
+        
+        <div id="dashboard">
+            <div class="loading">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal" id="codeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Code Viewer</h3>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="copyCode()">
+                        <i class="fas fa-copy"></i>
+                        Copy Code
+                    </button>
+                    <button class="btn btn-secondary" onclick="togglePreview()">
+                        <i class="fas fa-eye"></i>
+                        <span id="previewToggleText">Preview</span>
+                    </button>
+                    <button class="close-modal" onclick="closeModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="code-container">
+                    <div class="code-header">
+                        <span id="codeFileName">code.js</span>
+                        <span id="codeFileType">JavaScript</span>
+                    </div>
+                    <div class="code-content">
+                        <pre><code id="codeContent" class="language-javascript"></code></pre>
+                    </div>
+                </div>
+                <div class="preview-container" id="previewContainer" style="display: none;">
+                    <div class="preview-header">
+                        Live Preview
+                    </div>
+                    <div class="preview-content" id="previewContent">
+                        <!-- Preview will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // GitHub API Configuration
+        const GITHUB_TOKEN = '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';
+        const REPO_OWNER = 'Xvoid22';
+        const REPO_NAME = 'CodeSpeed';
+        const FOLDER_PATH = 'upload';
+
+        let currentCode = '';
+        let isPreviewVisible = false;
+
+        // Sidebar functionality
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // Load files from GitHub repository
+        async function loadFilesFromGitHub() {
+            try {
+                const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FOLDER_PATH}`, {
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const files = await response.json();
+                return files.filter(file => file.type === 'file');
+            } catch (error) {
+                console.error('Error loading files from GitHub:', error);
+                return [];
+            }
+        }
+
+        // Get file extension and determine type
+        function getFileType(filename) {
+            const extension = filename.split('.').pop().toLowerCase();
+            const types = {
+                'js': { type: 'JavaScript', icon: 'fab fa-js-square', language: 'javascript' },
+                'html': { type: 'HTML', icon: 'fab fa-html5', language: 'html' },
+                'css': { type: 'CSS', icon: 'fab fa-css3-alt', language: 'css' },
+                'py': { type: 'Python', icon: 'fab fa-python', language: 'python' },
+                'json': { type: 'JSON', icon: 'fas fa-file-code', language: 'json' },
+                'md': { type: 'Markdown', icon: 'fab fa-markdown', language: 'markdown' }
+            };
+            return types[extension] || { type: 'Text', icon: 'fas fa-file-alt', language: 'text' };
+        }
+
+        // Render dashboard with files
+        function renderDashboard(files) {
+            const dashboard = document.getElementById('dashboard');
+            
+            if (files.length === 0) {
+                dashboard.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--text-gray);">
+                        <i class="fas fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                        <p>No files found in the upload folder</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const grid = document.createElement('div');
+            grid.className = 'dashboard-grid';
+
+            files.forEach((file, index) => {
+                const fileInfo = getFileType(file.name);
+                const card = document.createElement('div');
+                card.className = 'code-card';
+                card.style.animationDelay = `${index * 0.1}s`;
+                
+                card.innerHTML = `
+                    <div class="code-card-title">
+                        <i class="${fileInfo.icon}"></i>
+                        ${file.name}
+                    </div>
+                    <div class="code-card-type">${fileInfo.type}</div>
+                    <div class="code-card-description">
+                        Click to view and copy the code
+                    </div>
+                `;
+
+                card.addEventListener('click', () => openCodeModal(file));
+                grid.appendChild(card);
+            });
+
+            dashboard.innerHTML = '';
+            dashboard.appendChild(grid);
+        }
+
+        // Fetch file content from GitHub
+        async function getFileContent(file) {
+            try {
+                const response = await fetch(file.download_url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.text();
+            } catch (error) {
+                console.error('Error fetching file content:', error);
+                return 'Error loading file content';
+            }
+        }
+
+        // Open code modal
+        async function openCodeModal(file) {
+            const modal = document.getElementById('codeModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const codeFileName = document.getElementById('codeFileName');
+            const codeFileType = document.getElementById('codeFileType');
+            const codeContent = document.getElementById('codeContent');
+            const previewContainer = document.getElementById('previewContainer');
+            
+            const fileInfo = getFileType(file.name);
+            
+            modalTitle.textContent = file.name;
+            codeFileName.textContent = file.name;
+            codeFileType.textContent = fileInfo.type;
+            
+            // Show loading
+            codeContent.textContent = 'Loading...';
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Fetch and display content
+            currentCode = await getFileContent(file);
+            codeContent.textContent = currentCode;
+            codeContent.className = `language-${fileInfo.language}`;
+            
+            // Apply syntax highlighting
+            Prism.highlightElement(codeContent);
+            
+            // Hide preview initially
+            previewContainer.style.display = 'none';
+            isPreviewVisible = false;
+            document.getElementById('previewToggleText').textContent = 'Preview';
+        }
+
+        // Close modal
+        function closeModal() {
+            const modal = document.getElementById('codeModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Copy code to clipboard
+        async function copyCode() {
+            try {
+                await navigator.clipboard.writeText(currentCode);
+                
+                // Show success feedback
+                const btn = event.target.closest('.btn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                btn.style.background = '#10b981';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy code:', err);
+                alert('Failed to copy code to clipboard');
+            }
+        }
+
+        // Toggle preview
+        function togglePreview() {
+            const previewContainer = document.getElementById('previewContainer');
+            const previewContent = document.getElementById('previewContent');
+            const toggleText = document.getElementById('previewToggleText');
+            
+            if (isPreviewVisible) {
+                previewContainer.style.display = 'none';
+                isPreviewVisible = false;
+                toggleText.textContent = 'Preview';
+            } else {
+                // Generate preview based on file type
+                const fileName = document.getElementById('codeFileName').textContent;
+                const fileInfo = getFileType(fileName);
+                
+                if (fileInfo.language === 'html') {
+                    previewContent.innerHTML = currentCode;
+                } else if (fileInfo.language === 'css') {
+                    previewContent.innerHTML = `
+                        <style>${currentCode}</style>
+                        <div style="padding: 1rem;">
+                            <p>CSS preview - styles are applied to this container</p>
+                            <div class="demo-element">Sample element</div>
+                        </div>
+                    `;
+                } else if (fileInfo.language === 'javascript') {
+                    previewContent.innerHTML = `
+                        <div style="padding: 1rem;">
+                            <p>JavaScript code - check browser console for output</p>
+                            <button onclick="runJSCode()" style="padding: 0.5rem 1rem; margin-top: 1rem; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                Run Code
+                            </button>
+                            <div id="jsOutput" style="margin-top: 1rem; padding: 1rem; background: #f3f4f6; color: black; border-radius: 4px; min-height: 50px;"></div>
+                        </div>
+                    `;
+                } else {
+                    previewContent.innerHTML = `
+                        <div style="padding: 1rem;">
+                            <p>Preview not available for this file type</p>
+                        </div>
+                    `;
+                }
+                
+                previewContainer.style.display = 'block';
+                isPreviewVisible = true;
+                toggleText.textContent = 'Hide Preview';
+            }
+        }
+
+        // Run JavaScript code (for preview)
+        function runJSCode() {
+            const output = document.getElementById('jsOutput');
+            output.innerHTML = '';
+            
+            // Capture console output
+            const originalLog = console.log;
+            const logs = [];
+            
+            console.log = function(...args) {
+                logs.push(args.join(' '));
+                originalLog.apply(console, arguments);
+            };
+            
+            try {
+                eval(currentCode);
+                output.innerHTML = logs.length > 0 ? logs.join('<br>') : 'Code executed successfully (no console output)';
+            } catch (error) {
+                output.innerHTML = `<span style="color: red;">Error: ${error.message}</span>`;
+            } finally {
+                console.log = originalLog;
+            }
+        }
+
+        // Show dashboard
+        function showDashboard() {
+            toggleSidebar();
+            // Reload dashboard if needed
+            initializeDashboard();
+        }
+
+        // Show contact info
+        function showContact() {
+            toggleSidebar();
+            alert('Contact: your-email@example.com\nTelegram: @yourusername');
+        }
+
+        // Initialize dashboard
+        async function initializeDashboard() {
+            const files = await loadFilesFromGitHub();
+            renderDashboard(files);
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('codeModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDashboard();
+        });
+    </script>
+</body>
+</html>
