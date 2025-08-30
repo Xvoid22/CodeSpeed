@@ -539,12 +539,12 @@
 <body class="light">
     <!-- Header -->
     <header class="header">
-        <div class="logo" onclick="loadDashboard()">
+        <div class="logo" onclick="navigateHome()">
             <i class="fas fa-code"></i>
             <span>CodeSpeed</span>
         </div>
         <div class="header-controls">
-            <button class="back-btn" id="backBtn" onclick="loadDashboard()">
+            <button class="back-btn" id="backBtn" onclick="navigateHome()">
                 <i class="fas fa-arrow-left"></i>
                 Kembali
             </button>
@@ -567,7 +567,7 @@
         </div>
         <ul class="nav-links">
             <li>
-                <a href="#" onclick="loadDashboard()">
+                <a href="#" onclick="navigateHome()">
                     <i class="fas fa-home"></i>
                     Dashboard
                 </a>
@@ -623,7 +623,7 @@
                     <i class="fas fa-copy"></i>
                     Salin Code
                 </button>
-                <button class="btn btn-secondary" onclick="closeCodeView()">
+                <button class="btn btn-secondary" onclick="navigateHome()">
                     <i class="fas fa-times"></i>
                     Tutup
                 </button>
@@ -642,6 +642,39 @@
     <script>
         let currentCode = '';
         let currentFileName = '';
+
+        // URL Router Functions
+        function updateURL(fileName) {
+            if (fileName) {
+                history.pushState({fileName: fileName}, '', `/code/${fileName}`);
+            } else {
+                history.pushState({}, '', '/');
+            }
+        }
+
+        function parseURL() {
+            const path = window.location.pathname;
+            const codeMatch = path.match(/^\/code\/(.+)$/);
+            if (codeMatch) {
+                return codeMatch[1];
+            }
+            // Support for root level files like /testing.js
+            const rootMatch = path.match(/^\/([^\/]+\.[a-zA-Z0-9]+)$/);
+            if (rootMatch) {
+                return rootMatch[1];
+            }
+            return null;
+        }
+
+        function navigateToCode(fileName) {
+            updateURL(fileName);
+            openCodeView(fileName);
+        }
+
+        function navigateHome() {
+            updateURL();
+            loadDashboard();
+        }
 
         // Theme Management
         function toggleTheme() {
@@ -787,7 +820,7 @@
                 }
 
                 gridHTML += `
-                    <div class="code-card" onclick="openCodeView('${fileName}')">
+                    <div class="code-card" onclick="navigateToCode('${fileName}')">
                         <h3 class="code-title">
                             <i class="${icon}"></i>
                             ${displayName}
@@ -855,17 +888,6 @@
             closeSidebar();
         }
 
-        function closeCodeView() {
-            const mainContent = document.getElementById('mainContent');
-            const codeView = document.getElementById('codeView');
-            const backBtn = document.getElementById('backBtn');
-            
-            // Show main content and hide code view
-            codeView.classList.remove('active');
-            mainContent.style.display = 'block';
-            backBtn.style.display = 'none';
-        }
-
         // Copy Code Function
         async function copyCode() {
             try {
@@ -894,25 +916,35 @@
             }, 3000);
         }
 
+        // Handle browser navigation
+        window.addEventListener('popstate', function(e) {
+            const fileName = parseURL();
+            if (fileName) {
+                openCodeView(fileName);
+            } else {
+                loadDashboard();
+            }
+        });
+
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             loadTheme();
-            loadDashboard();
+            
+            // Check if URL has a file path on initial load
+            const fileName = parseURL();
+            if (fileName) {
+                // Don't update URL since we're already on the correct path
+                openCodeView(fileName);
+            } else {
+                loadDashboard();
+            }
         });
 
         // Close code view on escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                closeCodeView();
+                navigateHome();
                 closeSidebar();
-            }
-        });
-
-        // Handle browser back button
-        window.addEventListener('popstate', function(e) {
-            const codeView = document.getElementById('codeView');
-            if (codeView.classList.contains('active')) {
-                closeCodeView();
             }
         });
     </script>
