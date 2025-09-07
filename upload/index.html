@@ -1,0 +1,164 @@
+<!DOCTYPE html><html lang="ms">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prank Seram (Selamat)</title>
+  <style>
+    :root{
+      --bg:#0a0a0a;--card:#121212;--text:#e5e5e5;--muted:#9aa0a6;--accent:#ff4444;--accent2:#8a2be2;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:radial-gradient(1200px 800px at 70% -10%,rgba(255,68,68,.05),transparent),linear-gradient(180deg,#0a0a0a,#0a0a0a 40%,#0c0c0c);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",sans-serif;min-height:100svh;display:grid;place-items:center}
+    .container{width:min(92vw,480px)}
+    .card{background:linear-gradient(180deg,#151515,#101010);border:1px solid #1f1f1f;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.45);padding:28px}
+    h1{margin:0 0 6px;font-weight:800;letter-spacing:.3px}
+    p{margin:0 0 18px;color:var(--muted)}
+    label{display:block;font-size:14px;margin-bottom:6px;color:#c9c9c9}
+    input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid #242424;background:#0d0d0d;color:var(--text)}
+    .row{display:flex;gap:12px;margin-top:14px}
+    button{appearance:none;border:0;border-radius:12px;padding:12px 14px;font-weight:700;cursor:pointer}
+    .btn-primary{background:conic-gradient(from 180deg at 50% 50%,#8a2be2,#ff4444);color:white}
+    .btn-ghost{background:transparent;color:var(--text);border:1px solid #2a2a2a}/* Consent modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;place-items:center;z-index:50}
+.modal.open{display:grid}
+.modal-card{width:min(92vw,420px);background:#121212;border:1px solid #252525;border-radius:18px;padding:20px}
+
+/* Experience layer */
+.stage{position:fixed;inset:0;background:black;display:none;align-items:center;justify-content:center;z-index:40}
+.stage.show{display:flex}
+video{max-width:100vw;max-height:100svh}
+
+/* Panic/Exit button */
+.panic{position:fixed;top:12px;right:12px;z-index:60;background:#111;border:1px solid #333;color:#fff;padding:10px 12px;border-radius:999px;font-weight:800;letter-spacing:.3px}
+
+/* Jump scare overlay */
+.screamer{position:fixed;inset:0;display:none;place-items:center;background:radial-gradient(1200px 800px at 50% 50%,rgba(0,0,0,.2),rgba(0,0,0,.9));z-index:55}
+.screamer img{max-width:min(90vw,700px);filter:contrast(130%) saturate(120%)}
+.screamer.show{display:grid;animation:flash .8s ease}
+@keyframes flash{0%{opacity:0}20%{opacity:1}80%{opacity:1}100%{opacity:0}}
+
+/* Subtle glitch title */
+.glitch{position:relative;display:inline-block}
+.glitch::before,.glitch::after{content:attr(data-text);position:absolute;left:0;top:0;clip-path:inset(0 0 0 0)}
+.glitch::before{transform:translateX(-1px);color:#ff4444;mix-blend-mode:screen;animation:g1 3s infinite ease-in-out}
+.glitch::after{transform:translateX(1px);color:#8a2be2;mix-blend-mode:screen;animation:g2 2.6s infinite ease-in-out}
+@keyframes g1{0%,100%{clip-path:inset(0 0 0 0)}50%{clip-path:inset(10% 0 15% 0)}}
+@keyframes g2{0%,100%{clip-path:inset(0 0 0 0)}50%{clip-path:inset(15% 0 10% 0)}}
+
+  </style>
+</head>
+<body>
+  <button class="panic" id="panicBtn" title="Keluar segera (Esc)">KELUAR</button>  <main class="container">
+    <section class="card" id="loginCard" aria-labelledby="title">
+      <h1 id="title"><span class="glitch" data-text="Log Masuk">Log Masuk</span></h1>
+      <p>Ini sekadar prank seram <strong>yang selamat</strong>. Minta izin kawan dulu ya.</p><form id="form">
+    <label for="username">Nama pengguna</label>
+    <input id="username" name="username" autocomplete="username" required placeholder="cth: ahmad_01" />
+    <div class="row">
+      <button class="btn-primary" type="submit">Log Masuk</button>
+      <button class="btn-ghost" type="reset">Kosongkan</button>
+    </div>
+  </form>
+</section>
+
+  </main>  <!-- Consent Modal -->  <div class="modal" id="consentModal" role="dialog" aria-modal="true" aria-labelledby="consentTitle">
+    <div class="modal-card">
+      <h2 id="consentTitle">Prank Seram – Dibenarkan?</h2>
+      <p style="color:#c9c9c9">Laman ini akan memainkan video seram dan bunyi kuat dalam mod skrin penuh selama lebih kurang 10 saat. Anda boleh tekan <kbd>Esc</kbd> atau butang <strong>KELUAR</strong> pada bila-bila masa.</p>
+      <div class="row" style="margin-top:16px">
+        <button id="agree" class="btn-primary">Setuju & Teruskan</button>
+        <button id="cancel" class="btn-ghost">Batal</button>
+      </div>
+    </div>
+  </div>  <!-- Experience Stage -->  <div class="stage" id="stage" aria-hidden="true">
+    <!-- Gantikan src video & audio di bawah mengikut fail anda sendiri -->
+    <video id="spookyVideo" preload="auto" playsinline>
+      <source src="scary.mp4" type="video/mp4" />
+    </video>
+    <audio id="scream" preload="auto">
+      <source src="scream.mp3" type="audio/mpeg" />
+    </audio>
+  </div>  <!-- Screamer overlay (flash image) -->  <div class="screamer" id="screamer" aria-hidden="true">
+    <img src="screamer.jpg" alt="Imej seram" />
+  </div>  <script>
+    const form = document.getElementById('form');
+    const modal = document.getElementById('consentModal');
+    const stage = document.getElementById('stage');
+    const video = document.getElementById('spookyVideo');
+    const scream = document.getElementById('scream');
+    const screamer = document.getElementById('screamer');
+    const panicBtn = document.getElementById('panicBtn');
+
+    // Utility: enter/exit fullscreen safely (requires user gesture)
+    async function enterFullscreen(el){
+      if(el.requestFullscreen){
+        try{ await el.requestFullscreen(); }catch(e){ /* ignore */ }
+      }
+    }
+    async function exitFullscreen(){
+      if(document.fullscreenElement){
+        try{ await document.exitFullscreen(); }catch(e){ /* ignore */ }
+      }
+    }
+
+    function openModal(){ modal.classList.add('open'); }
+    function closeModal(){ modal.classList.remove('open'); }
+
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      openModal();
+    });
+
+    document.getElementById('cancel').addEventListener('click', ()=>{
+      closeModal();
+    });
+
+    document.getElementById('agree').addEventListener('click', async ()=>{
+      closeModal();
+      await startExperience();
+    });
+
+    async function startExperience(){
+      stage.classList.add('show');
+      stage.setAttribute('aria-hidden','false');
+
+      // Try vibrate a little (if supported)
+      if(navigator.vibrate){ navigator.vibrate([60, 30, 60, 30, 120]); }
+
+      // Autoplay with user gesture allowed; ensure volume
+      try{ video.currentTime = 0; await video.play(); }catch(e){ /* may need user gesture on some devices */ }
+
+      // Go fullscreen for immersion (user can exit with Esc/panic)
+      await enterFullscreen(stage);
+
+      // After a few seconds, flash the screamer and play scream audio
+      setTimeout(()=>{
+        screamer.classList.add('show');
+        try{ scream.currentTime = 0; scream.play(); }catch(e){}
+        // Hide screamer after flash
+        setTimeout(()=>{ screamer.classList.remove('show'); }, 800);
+      }, 3000);
+
+      // Auto end after ~10s to be polite
+      setTimeout(()=>{ safeExit(); }, 10000);
+    }
+
+    async function safeExit(){
+      // Stop media
+      try{ video.pause(); }catch(e){}
+      try{ scream.pause(); scream.currentTime = 0; }catch(e){}
+      // Hide layers
+      stage.classList.remove('show');
+      stage.setAttribute('aria-hidden','true');
+      screamer.classList.remove('show');
+      // Exit fullscreen if any
+      await exitFullscreen();
+    }
+
+    panicBtn.addEventListener('click', safeExit);
+    // Esc key safety
+    window.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape') safeExit();
+    });
+  </script></body>
+</html>
