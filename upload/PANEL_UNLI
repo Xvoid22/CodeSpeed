@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pterodactyl Panel Clone</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #1e1e2f;
+      color: #ddd;
+    }
+    header {
+      background: #2d2d44;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header h1 {
+      font-size: 18px;
+      margin: 0;
+    }
+    nav {
+      display: flex;
+      gap: 15px;
+    }
+    nav a {
+      color: #ccc;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    nav a:hover {
+      color: #fff;
+    }
+    .panel {
+      padding: 20px;
+    }
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .buttons button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .start { background: #2f80ed; color: white; }
+    .restart { background: #7f8c8d; color: white; }
+    .stop { background: #e74c3c; color: white; }
+    .console {
+      background: #111;
+      padding: 20px;
+      border-radius: 8px;
+      font-family: monospace;
+      height: 250px;
+      overflow-y: auto;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .stat-box {
+      background: #2d2d44;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .chart {
+      margin-top: 20px;
+      background: #2d2d44;
+      height: 150px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Pterodactyl</h1>
+    <nav>
+      <a href="#">Console</a>
+      <a href="#">Files</a>
+      <a href="#">Databases</a>
+      <a href="#">Schedules</a>
+      <a href="#">Users</a>
+      <a href="#">Backups</a>
+    </nav>
+  </header>
+
+  <div class="panel">
+    <div class="buttons">
+      <button class="start">Start</button>
+      <button class="restart">Restart</button>
+      <button class="stop">Stop</button>
+    </div>
+
+    <div class="console">
+      <pre>
+   ▄▄▄▄▄▄▄▄▄
+   ▀▀██▀▀▀▀██
+     ██    ██
+     ██    ██
+     ██▄▄▄▄██
+     ▀▀▀▀▀▀▀
+      
+VenedettaGensutzu-V4.0
+Author : Official WennZ
+Status : Running
+      </pre>
+    </div>
+
+    <div class="stats">
+      <div class="stat-box">
+        <strong>Address</strong><br>
+        luxzxkapotidpriv:2788
+      </div>
+      <div class="stat-box">
+        <strong>Uptime</strong><br>
+        0h 0m 31s
+      </div>
+      <div class="stat-box">
+        <strong>CPU Load</strong><br>
+        0.70%
+      </div>
+      <div class="stat-box">
+        <strong>Memory</strong><br>
+        211.82 MiB
+      </div>
+      <div class="stat-box">
+        <strong>Disk</strong><br>
+        5.98 MiB
+      </div>
+      <div class="stat-box">
+        <strong>Network (Inbound)</strong><br>
+        248.16 MiB
+      </div>
+      <div class="stat-box">
+        <strong>Network (Outbound)</strong><br>
+        1.38 MiB
+      </div>
+    </div>
+
+    <div class="chart"></div>
+  </div>
+</body>
+</html>
