@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surxrat Private V1.4</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #5b4dff;
+            --secondary-color: #3b30ad;
+            --background-dark: #1a1a2e;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --light-text-color: #666666;
+            --border-radius: 15px;
+            --shadow-light: 0 8px 30px rgba(0, 0, 0, 0.1);
+            --shadow-dark: 0 15px 40px rgba(0, 0, 0, 0.3);
+            --danger-color: #dc3545; /* Red for cancel button */
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #2a2a4a, #1a1a2e);
+            color: var(--text-color);
+            overflow: hidden; /* Prevent scroll for background animation */
+        }
+
+        /* Background Animation */
+        .background-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .background-animation::before,
+        .background-animation::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: float 15s infinite ease-in-out alternate;
+        }
+
+        .background-animation::before {
+            background: rgba(91, 77, 255, 0.3); /* Primary color with transparency */
+            width: 300px;
+            height: 300px;
+            top: -50px;
+            left: -50px;
+            animation-duration: 18s;
+        }
+
+        .background-animation::after {
+            background: rgba(59, 48, 173, 0.3); /* Secondary color with transparency */
+            width: 200px;
+            height: 200px;
+            bottom: -30px;
+            right: -30px;
+            animation-duration: 20s;
+            animation-delay: 2s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -20px) scale(1.1); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        .container {
+            perspective: 1000px; /* For 3D transforms */
+        }
+
+        .card {
+            background-color: var(--card-background);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-dark);
+            text-align: center;
+            width: 350px;
+            max-width: 90%;
+            animation: cardEntrance 1s ease-out forwards;
+            transform-style: preserve-3d;
+            transform: rotateY(0deg);
+            margin-left: auto; 
+            margin-right: auto;
+        }
+
+        @keyframes cardEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .card h1 {
+            color: var(--primary-color);
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+            animation: textFadeIn 1s ease-out forwards 0.5s;
+            opacity: 0;
+        }
+
+        .card h1 .version {
+            font-size: 0.7em;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .card .tagline {
+            color: var(--light-text-color);
+            margin-bottom: 30px;
+            font-size: 1em;
+            animation: textFadeIn 1s ease-out forwards 0.7s;
+            opacity: 0;
+        }
+
+        @keyframes textFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow-light);
+            width: 100%; /* Make buttons full width */
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+            text-decoration: none; /* For anchor tags styled as buttons */
+        }
+
+        .btn i {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .primary-btn {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 8px 20px rgba(91, 77, 255, 0.4);
+        }
+
+        .primary-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(91, 77, 255, 0.6);
+        }
+
+        .primary-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 5px 15px rgba(91, 77, 255, 0.3);
+        }
+
+        .grid-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+            animation: gridEntrance 1s ease-out forwards 0.9s;
+            opacity: 0;
+        }
+
+        @keyframes gridEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .secondary-btn {
+            background-color: #f0f0f0;
+            color: var(--text-color);
+            font-size: 0.95em;
+            padding: 12px 20px;
+        }
+
+        .secondary-btn:hover {
+            background-color: #e0e0e0;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .secondary-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            background-color: rgba(0, 0, 0, 0.7); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: var(--card-background);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: var(--shadow-dark);
+            width: 300px;
+            max-width: 80%;
+            transform: translateY(-50px) scale(0.8);
+            opacity: 0;
+            animation: modalPopIn 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+        }
+
+        .modal.show .modal-content {
+            animation: modalPopIn 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+        }
+
+        @keyframes modalPopIn {
+            from {
+                transform: translateY(-50px) scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-content h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .modal-content p {
+            color: var(--text-color);
+            margin-bottom: 25px;
+            font-size: 1em;
+        }
+
+        .modal-content .modal-buttons-group {
+            display: flex;
+            justify-content: space-around;
+            gap: 15px; /* Space between buttons */
+            margin-top: 10px;
+        }
+
+        .modal-content .modal-buttons-group .btn {
+            width: 100%; /* Make buttons within the group take full width */
+            margin-bottom: 0; /* Remove default button margin */
+        }
+        
+        .modal-content .primary-btn {
+            width: 80%;
+            margin-top: 10px;
+        }
+
+        /* Styles for Cancel button */
+        .cancel-btn {
+            background-color: var(--danger-color);
+            color: white;
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+
+        .cancel-btn:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.6);
+        }
+
+        /* Styles for Contact Modal specific buttons */
+        .contact-modal-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Spasi antar tombol */
+            margin-bottom: 20px;
+        }
+
+        .contact-modal-buttons .btn {
+            margin-bottom: 0; /* Override default margin for individual buttons in this group */
+        }
+
+        .whatsapp-btn {
+            background-color: #25D366; /* WhatsApp Green */
+            color: white;
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+        }
+
+        .whatsapp-btn:hover {
+            background-color: #1DA851;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.6);
+        }
+
+        .telegram-btn {
+            background-color: #0088CC; /* Telegram Blue */
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 136, 204, 0.4);
+        }
+
+        .telegram-btn:hover {
+            background-color: #006699;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 136, 204, 0.6);
+        }
+
+        .close-contact-btn {
+            background-color: #E91E63; /* Pinkish red */
+            color: white;
+            margin-top: 10px; /* Space from other buttons */
+            box-shadow: 0 5px 15px rgba(233, 30, 99, 0.3);
+        }
+
+        .close-contact-btn:hover {
+            background-color: #C2185B;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(233, 30, 99, 0.5);
+        }
+
+        /* Tutorial Modal Specific Styles */
+        .tutorial-modal-content {
+            text-align: left; /* Align text to left for list */
+        }
+
+        .tutorial-modal-content h2 {
+            text-align: center; /* Center the title */
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .tutorial-modal-content ul {
+            list-style: none; /* Remove default bullet points */
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        .tutorial-modal-content ul li {
+            margin-bottom: 10px;
+            font-size: 1em;
+            color: var(--text-color);
+            line-height: 1.5;
+        }
+
+        .tutorial-modal-content ul li strong {
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .tutorial-modal-buttons {
+            display: flex;
+            gap: 15px; /* Space between buttons */
+            justify-content: center; /* Center the buttons */
+            margin-top: 25px;
+        }
+
+        .tutorial-modal-buttons .btn {
+            width: auto; /* Allow buttons to size based on content */
+            flex-grow: 1; /* Allow buttons to grow to fill space */
+            margin-bottom: 0; /* Override default margin */
+        }
+
+        .video-tutorial-btn {
+            background-color: #FF0000; /* YouTube Red */
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
+        }
+
+        .video-tutorial-btn:hover {
+            background-color: #CC0000;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 0, 0, 0.6);
+        }
+
+        .understand-btn {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 5px 15px rgba(91, 77, 255, 0.4);
+        }
+
+        .understand-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(91, 77, 255, 0.6);
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .card {
+                padding: 30px 20px;
+                width: 90%; 
+                max-width: 350px; 
+            }
+            .card h1 {
+                font-size: 1.8em;
+            }
+            .grid-buttons {
+                grid-template-columns: 1fr; 
+                gap: 10px; 
+            }
+            .btn {
+                font-size: 1em;
+                padding: 12px 20px;
+            }
+            .modal-content {
+                padding: 25px;
+            }
+            .modal-content h2 {
+                font-size: 1.5em;
+            }
+            /* Ensure all buttons are full width and centered */
+            .primary-btn, .secondary-btn, .whatsapp-btn, .telegram-btn, .close-contact-btn {
+                width: 100%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .tutorial-modal-buttons, .modal-buttons-group {
+                flex-direction: column; /* Stack buttons vertically on small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-animation"></div>
+
+    <div class="container">
+        <div class="card">
+            <h1>Surxrat Private <span class="version">V1.4</span></h1>
+            <p class="tagline">Order otomatis, cepat, dan aman.</p>
+            
+            <button class="btn primary-btn" id="buyNowBtn">
+                <i class="fas fa-shopping-cart"></i> Beli Sekarang
+            </button>
+
+            <div class="grid-buttons">
+                <button class="btn secondary-btn">
+                    <i class="fas fa-history"></i> Riwayat
+                </button>
+                <button class="btn secondary-btn" id="tutorialBtn">
+                    <i class="fas fa-question-circle"></i> Tutorial
+                </button>
+                <button class="btn secondary-btn">
+                    <i class="fas fa-download"></i> Download
+                </button>
+                <button class="btn secondary-btn" id="contactBtn">
+                    <i class="fas fa-headset"></i> Kontak
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Pembayaran -->
+    <div id="cancelModal" class="modal">
+        <div class="modal-content">
+            <h2>Pembayaran</h2>
+            <p>Apakah anda ingin lanjut ke sesi pembayaran?</p>
+            <div class="modal-buttons-group">
+                <a href="YOUR_PAYMENT_LINK_HERE" target="_blank" class="btn primary-btn" id="confirmPaymentBtn">Oke</a>
+                <button class="btn cancel-btn" id="closeCancelModalBtn">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Kontak Owner -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <h2>Kontak Owner</h2>
+            <p>Jika Anda memerlukan bantuan atau memiliki pertanyaan, jangan ragu untuk menghubungi kami melalui WhatsApp atau Telegram.</p>
+            <div class="contact-modal-buttons">
+                <a href="https://wa.me/YOUR_WHATSAPP_NUMBER" target="_blank" class="btn whatsapp-btn">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </a>
+                <a href="https://t.me/YOUR_TELEGRAM_USERNAME" target="_blank" class="btn telegram-btn">
+                    <i class="fab fa-telegram-plane"></i> Telegram
+                </a>
+            </div>
+            <button class="btn close-contact-btn" id="closeContactModalBtn">Tutup</button>
+        </div>
+    </div>
+
+    <!-- Modal Cara Order Surxrat (Tutorial) -->
+    <div id="tutorialModal" class="modal">
+        <div class="modal-content tutorial-modal-content">
+            <h2>Cara Order Surxrat</h2>
+            <ul>
+                <li><strong>Langkah 1:</strong> Klik "Beli Sekarang".</li>
+                <li><strong>Langkah 2:</strong> Pindai QRIS menggunakan e-wallet atau m-banking Anda.</li>
+                <li><strong>Langkah 3:</strong> Selesaikan pembayaran.</li>
+                <li><strong>Langkah 4:</strong> Masukkan username yang diinginkan dan nomor kontak.</li>
+                <li><strong>Langkah 5:</strong> Akun Anda akan dibuat dan struk akan ditampilkan.</li>
+            </ul>
+            <div class="tutorial-modal-buttons">
+                <a href="#" target="_blank" class="btn video-tutorial-btn">
+                    <i class="fab fa-youtube"></i> Video Tutorial
+                </a>
+                <button class="btn understand-btn" id="closeTutorialModalBtn">Mengerti</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const buyNowBtn = document.getElementById('buyNowBtn');
+            const cancelModal = document.getElementById('cancelModal');
+            const closeCancelModalBtn = document.getElementById('closeCancelModalBtn'); 
+            const confirmPaymentBtn = document.getElementById('confirmPaymentBtn'); // NEW: Oke button for payment link
+
+            const contactBtn = document.getElementById('contactBtn'); 
+            const contactModal = document.getElementById('contactModal'); 
+            const closeContactModalBtn = document.getElementById('closeContactModalBtn');
+
+            const tutorialBtn = document.getElementById('tutorialBtn'); 
+            const tutorialModal = document.getElementById('tutorialModal'); 
+            const closeTutorialModalBtn = document.getElementById('closeTutorialModalBtn'); 
+
+            const card = document.querySelector('.card'); 
+
+            function showModal(modalElement) {
+                modalElement.classList.add('show');
+            }
+
+            function hideModal(modalElement) {
+                modalElement.classList.remove('show');
+            }
+
+            // Buy Now Button -> Cancel Modal
+            if (buyNowBtn) {
+                buyNowBtn.addEventListener('click', (e) => {
+                    e.preventDefault(); 
+                    showModal(cancelModal);
+                });
+            }
+
+            // Close Cancel Modal Button (the red "Batal" button)
+            if (closeCancelModalBtn) {
+                closeCancelModalBtn.addEventListener('click', () => {
+                    hideModal(cancelModal);
+                });
+            }
+
+            // "Oke" button in Payment Modal now directly uses its href
+            // No specific JavaScript needed for confirmPaymentBtn as it's an anchor tag
+
+            // Contact Button -> Contact Modal
+            if (contactBtn) {
+                contactBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showModal(contactModal);
+                });
+            }
+
+            if (closeContactModalBtn) {
+                closeContactModalBtn.addEventListener('click', () => {
+                    hideModal(contactModal);
+                });
+            }
+
+            // Tutorial Button -> Tutorial Modal
+            if (tutorialBtn) {
+                tutorialBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showModal(tutorialModal);
+                });
+            }
+
+            if (closeTutorialModalBtn) {
+                closeTutorialModalBtn.addEventListener('click', () => {
+                    hideModal(tutorialModal);
+                });
+            }
+
+            // Close modal when clicking outside (for all modals)
+            window.addEventListener('click', (event) => {
+                if (event.target == cancelModal) {
+                    hideModal(cancelModal);
+                }
+                if (event.target == contactModal) { 
+                    hideModal(contactModal);
+                }
+                if (event.target == tutorialModal) { 
+                    hideModal(tutorialModal);
+                }
+            });
+
+            // Card hover effect (existing)
+            if (card) {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left; 
+                    const y = e.clientY - rect.top;  
+
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+
+                    const rotateX = ((y - centerY) / centerY) * 10; 
+                    const rotateY = ((x - centerX) / centerX) * -10; 
+
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+                    card.style.transition = 'transform 0.5s ease'; 
+                });
+
+                card.addEventListener('mouseenter', () => {
+                    card.style.transition = 'none'; 
+                });
+            }
+        });
+    </script>
+</body>
+</html>
