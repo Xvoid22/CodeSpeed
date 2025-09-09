@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Neon Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --neon-white: #fff;
+      --bg-dark: #0a0a0f;
+      --text-light: #fff;
+    }
+    body {
+      background: var(--bg-dark);
+      color: var(--text-light);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      transition: background 0.4s, color 0.4s;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2.5rem 1.2rem 2rem 1.2rem;
+    }
+    .neon-title {
+      font-size: 2.7rem;
+      font-weight: 800;
+      text-align: center;
+      color: var(--neon-white);
+      text-shadow: 0 0 16px #fff, 0 0 32px #fff, 0 0 8px #fff;
+      margin-bottom: 0.5rem;
+      letter-spacing: 2px;
+    }
+    .neon-subtitle {
+      text-align: center;
+      color: var(--neon-white);
+      font-size: 1.2rem;
+      margin-bottom: 2.2rem;
+      text-shadow: 0 0 12px #fff, 0 0 8px #fff;
+    }
+    .neon-section {
+      background: rgba(30,30,30,0.95);
+      border-radius: 1.2rem;
+      box-shadow: 0 0 24px 0 #fff, 0 2px 16px 0 #fff, 0 0 32px #fff;
+      padding: 1.5rem 1.7rem;
+      margin-bottom: 2rem;
+      border: 2px solid #fff;
+      position: relative;
+    }
+    .neon-section h2 {
+      color: var(--neon-white);
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 12px #fff, 0 0 8px #fff;
+    }
+    .neon-btn {
+      background: #111;
+      color: #fff;
+      font-weight: 700;
+      border: 2px solid #fff;
+      border-radius: 0.7rem;
+      padding: 0.8rem 2.2rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 0 16px #fff, 0 0 32px #fff;
+      margin: 0 auto;
+      display: block;
+      margin-bottom: 2rem;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+    .neon-btn:hover {
+      background: #fff;
+      color: #111;
+      box-shadow: 0 0 32px #fff, 0 0 16px #fff;
+    }
+    .neon-contact-list {
+      display: flex;
+      gap: 1.2rem;
+      justify-content: center;
+      margin-top: 1.2rem;
+    }
+    .neon-contact {
+      background: #111;
+      border-radius: 0.7rem;
+      padding: 0.7rem 1.3rem;
+      color: #fff;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 1.1rem;
+      box-shadow: 0 0 8px #fff;
+      border: 1.5px solid #fff;
+      transition: background 0.2s, color 0.2s;
+      text-decoration: none;
+    }
+    .neon-contact svg { filter: drop-shadow(0 0 6px #fff); }
+    .neon-contact:hover {
+      background: #fff;
+      color: #111;
+      box-shadow: 0 0 16px #fff, 0 0 16px #fff;
+    }
+    .neon-skillbar {
+      background: #fff2;
+      border-radius: 9999px;
+      height: 0.8rem;
+      margin-bottom: 1.1rem;
+      overflow: hidden;
+      box-shadow: 0 0 8px #fff;
+      position: relative;
+    }
+    .neon-skill {
+      height: 100%;
+      border-radius: 9999px;
+      width: 0%;
+      transition: width 1.2s cubic-bezier(.7,-0.2,.3,1.4);
+      position: absolute;
+      left: 0; top: 0;
+      background: #fff;
+      box-shadow: 0 0 12px #fff, 0 0 24px #fff;
+    }
+    .neon-skill-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin-bottom: 0.1rem;
+    }
+    .neon-portfolio-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+    }
+    .neon-portfolio-card {
+      background: #111;
+      border-radius: 1rem;
+      box-shadow: 0 0 16px #fff;
+      border: 1.5px solid #fff;
+      padding: 1rem 1.2rem;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .neon-portfolio-card:hover {
+      transform: scale(1.04);
+      box-shadow: 0 0 32px #fff, 0 0 16px #fff;
+    }
+    .neon-portfolio-thumb {
+      width: 100%;
+      border-radius: 0.7rem;
+      object-f
+it: cover;
+      margin-bottom: 0.4rem;
+      box-shadow: 0 0 8px #fff;
+    }
+    .neon-portfolio-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.1rem;
+      text-shadow: 0 0 8px #fff, 0 0 8px #fff;
+    }
+    .neon-portfolio-desc {
+      color: #fff;
+      font-size: 0.97rem;
+      margin-bottom: 0.2rem;
+      text-shadow: 0 0 6px #fff;
+    }
+    .neon-portfolio-link {
+      background: #111;
+      color: #fff;
+      font-weight: 700;
+      border: 2px solid #fff;
+      border-radius: 0.7rem;
+      padding: 0.4rem 1.1rem;
+      font-size: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 0 8px #fff;
+      margin-top: 0.1rem;
+      display: inline-block;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+    .neon-portfolio-link:hover {
+      background: #fff;
+      color: #111;
+      box-shadow: 0 0 16px #fff;
+    }
+    @media (max-width: 700px) {
+      .neon-portfolio-grid { grid-template-columns: 1fr; }
+      .container { padding: 1.2rem 0.3rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+  <img src="https://files.catbox.moe/REWQ.jpg" alt="Foto Profil Bayu" style="display:block;margin:0 auto 1.2rem auto;width:128px;height:128px;border-radius:50%;box-shadow:0 0 24px #fff,0 0 8px #fff;object-fit:cover;border:3px solid #fff;">
+  <div class="neon-title">PANGERAN XPLOITT</div>
+    <div class="neon-subtitle">Pelajar | Developer | Indonesia</div>
+  <a href="shop.html" class="neon-btn" id="goToShop" style="display:inline-block;text-align:center;">Belanja di Shop</a>
+
+    <section class="neon-section">
+      <h2>Tentang Saya</h2>
+      <p>Halo! Nama saya Pangeran, seorang pelajar berusia 17 tahun dari Indonesia. Saya memiliki passion di bidang pengembangan software dan senang mempelajari teknologi baru. Saat ini saya fokus mengembangkan skill pemrograman dan berharap bisa menjadi developer profesional di masa depan.</p>
+    </section>
+
+    <section class="neon-section">
+      <h2>Skills & Kemampuan</h2>
+      <div id="neonSkills"></div>
+    </section>
+
+    <section class="neon-section">
+      <h2>Kontak Saya</h2>
+      <div class="neon-contact-list">
+        <a href="https://wa.me/08895307489" class="neon-contact" target="_blank" aria-label="WhatsApp">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path fill="#fff" d="M12 2a10 10 0 0 0-8.7 14.93L2 22l5.24-1.37A10 10 0 1 0 12 2Zm5.47 14.11c-.23.65-1.34 1.28-1.84 1.36-.47.08-1.06.12-1.7-.11-.39-.13-.89-.29-1.53-.57a9.1 9.1 0 0 1-3.1-2.47 7.7 7.7 0 0 1-1.6-2.7c-.17-.47-.02-.74.13-.97.14-.22.32-.28.54-.28.14 0 .28.01.4.01.13 0 .3-.05.47.36.18.43.6 1.47.65 1.58.05.11.09.25-.02.4-.11.15-.17.24-.33.39-.16.15-.2.31-.09.5.11.19.5.82 1.08 1.33.74.66 1.36.87 1.56.97.2.1.32.08.44-.05.12-.13.5-.58.63-.78.13-.2.26-.16.44-.1.18.06 1.13.53 1.32.62.19.09.32.13.37.2.05.07.05.41-.18 1.06Z"/></svg>
+          WhatsApp
+        </a>
+        <a href="https://t.me/bayuror" class="neon-contact" target="_blank" aria-label="Telegram">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path fill="#fff" d="M21.944 4.667a1.5 1.5 0 0 0-1.6-.2L3.6 11.2a1.5 1.5 0 0 0 .1 2.8l3.7 1.2 1.3 4.1a1.5 1.5 0 0 0 2.7.2l1.7-2.7 3.7 2.7a1.5 1.5 0 0 0 2.3-.8l3-13a1.5 1.5 0 0 0-.156-1.733ZM10.6 16.6l-1-3.1 7.6-6.7-6.6 8.2Zm1.7 2.1a.5.5 0 0 1-.9-.1l-1.3-4.1 8.7-7.7-6.5 11.9Zm7.2-1.2a.5.5 0 0 1-.8.3l-3.7-2.7-1.7 2.7a.5.5 0 0 1-.9-.1l-1.3-4.1 8.7-7.7-6.5 11.9Z"/></svg>
+          Telegram
+        </a>
+        <a href="https://www.tiktok.com/@username" class="neon-contact" target="_blank" aria-label="TikTok">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path fill="#fff" d="M17.5 2a1 1 0 0 1 1 1v2.25a3.25 3.25 0 0 0 3.25 3.25H22a1 1 0 1 1 0 2h-.25A5.25 5.25 0 0 1 16.5 3.25V3a1 1 0 0 1 1-1ZM9 8.5A5.5 5.5 0 1 0 14.5 14v-2.25a1 1 0 1 1 2 0V14A7.5 7.5 0 1 1 9 6.5a1 1 0 1 1 0 2Z"/></svg>
+          TikTok
+        </a>
+      </div>
+    </section>
+
+    <section class="neon-section" style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;justify-content:center
+nter;">
+      <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/4a44c258-32e6-4333-b4c5-77417c5488d5.png" alt="My Girl" style="width:120px;height:160px;object-fit:cover;border-radius:1rem;box-shadow:0 0 24px #fff;">
+      <div style="max-width:320px;">
+        <div style="font-weight:700;font-size:1.2rem;margin-bottom:0.2rem;color:#fff;text-shadow:0 0 8px #fff;">Aprilliana Eva Silvia</div>
+        <div style="font-size:0.98rem;color:#fff;margin-bottom:0.4rem;">15th - 7 April - Rambut hitam</div>
+        <div style="font-size:1rem;color:#fff;">Introvert pendiem cool cantik lucu imut baik hati tidak sombong rajin menabung setia penyabar...</div>
+      </div>
+    </section>
+
+    <!-- Widget Lagu Favorit (Spotify) -->
+    <section class="neon-section" id="lagu-favorit-section" style="margin-top:2rem;">
+      <h2 style="margin-bottom:0.7rem;">Lagu Favorit</h2>
+      <form id="spotify-form" style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;margin-bottom:1rem;">
+        <input id="spotify-link" type="text" placeholder="Paste link Spotify di sini" style="flex:1;min-width:220px;padding:0.5rem 1rem;border-radius:0.7rem;border:none;outline:none;background:#222;color:#fff;box-shadow:0 0 8px #fff;" />
+        <button type="submit" style="padding:0.5rem 1.2rem;border-radius:0.7rem;background:#fff;color:#000;font-weight:700;box-shadow:0 0 8px #fff;cursor:pointer;">Putar</button>
+      </form>
+      <div id="spotify-embed" style="width:100%;max-width:400px;margin:auto;"></div>
+    </section>
+
+    <!-- Quotes Favorit Neon -->
+    <section class="neon-section" style="margin-top:2rem;text-align:center;">
+      <h2 style="margin-bottom:0.7rem;">Quotes Favorit</h2>
+      <blockquote style="font-size:1.2rem;color:#fff;text-shadow:0 0 12px #fff,0 0 24px #fff;font-style:italic;letter-spacing:1px;">"Jangan menyerah, keajaiban terjadi setiap hari bagi yang percaya."</blockquote>
+    </section>
+
+    <!-- Widget Jam Digital Neon -->
+    <section class="neon-section" style="margin-top:2rem;text-align:center;">
+      <h2 style="margin-bottom:0.7rem;">Jam Digital</h2>
+      <div id="neon-clock" style="font-size:2.2rem;color:#fff;text-shadow:0 0 16px #fff,0 0 32px #fff;font-family:'Orbitron',monospace;"></div>
+    </section>
+
+    <!-- Tool Ambil HTML/JS dari Link (Local Flask) -->
+    <section class="neon-section" style="margin-top:2rem;">
+      <h2 style="margin-bottom:0.7rem;">Ambil HTML &amp; JavaScript (Full, via Python)</h2>
+      <button onclick="document.getElementById('ambilToolFrame').style.display='block'" style="padding:0.7rem 1.5rem;border-radius:0.7rem;background:#fff;color:#000;font-weight:700;box-shadow:0 0 8px #fff;cursor:pointer;margin-bottom:1rem;">Buka Tool Ambil HTML & JS</button>
+      <div id="ambilToolFrame" style="display:none;margin-top:1rem;">
+        <iframe src="http://localhost:5000" style="width:100%;min-height:600px;border-radius:1rem;border:2px solid #fff;box-shadow:0 0 16px #fff;background:#181818;"></iframe>
+      </div>
+      <div style="margin-top:1rem;color:#fff;font-size:0.95rem;opacity:0.8;">Pastikan server Python Flask sudah dijalankan di komputer kamu.</div>
+    </section>
+
+  </div>
+  <script>
+    // Skills
+    const neonSkills = [
+      { name: "JavaScript", percent: 80 },
+      { name: "Java", percent: 72 },
+      { name: "HTML", percent: 100 },
+      { name: "CSS", percent: 50 },
+      { name: "Python", percent: 5 },
+      { name: "Sketchware", percent: 82 }
+    ];
+    const skillsDiv = document.getElementById("neonSkills");
+    const skillColors = ["javascript","java","html","css","python","sketchware"];
+    neonSkills.forEach((skill, i) => {
+      const label = document.createElement("div");
+      label.className = "neon-skill-label-row";
+      label.innerHTML = <span>${skill.name}</span><span>${skill.percent}%</span>;
+      const bar = document.createElement("div");
+      bar.className = "neon-skillbar";
+      const fill = document.createElement("div");
+      fill.className = neon-skill ${skillColors[i]};
+      fill.style.width = "0%";
+      bar.ap
